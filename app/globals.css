@@ -1,0 +1,154 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: #171717;
+  --foreground: #ffffff;
+
+  /* Neon Colors */
+  --neon-pink: #ff0080;
+  --neon-magenta: #ff006e;
+  --neon-purple: #8338ec;
+  --neon-violet: #6a00f4;
+  --neon-blue: #0066ff;
+  --neon-cyan: #00f5ff;
+  --neon-turquoise: #00ffcc;
+  --neon-mint: #00ff88;
+  --neon-green: #00ff41;
+  --neon-lime: #88ff00;
+  --neon-yellow: #ffff00;
+  --neon-amber: #ffbf00;
+  --neon-orange: #ff8000;
+  --neon-red: #ff003c;
+  --neon-coral: #ff5757;
+  --neon-peach: #ff9a56;
+
+  /* Bright Neon Variations */
+  --neon-electric-blue: #00d4ff;
+  --neon-electric-purple: #bf00ff;
+  --neon-electric-green: #39ff14;
+  --neon-hot-pink: #ff1493;
+  --neon-laser-lemon: #ffff66;
+  --neon-acid-green: #b0ff00;
+
+  /* Glow Effects */
+  --neon-glow-pink: 0 0 20px #ff0080;
+  --neon-glow-blue: 0 0 20px #0066ff;
+  --neon-glow-green: 0 0 20px #00ff41;
+  --neon-glow-purple: 0 0 20px #8338ec;
+  --neon-glow-cyan: 0 0 20px #00f5ff;
+  --neon-glow-yellow: 0 0 20px #ffff00;
+}
+
+@theme inline {
+  --fb-logo: #0866ff;
+  --twitter-logo: #1da1f2;
+  --youtube-logo: #ff0000;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Neon Colors for Tailwind */
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-magenta: var(--neon-magenta);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-violet: var(--neon-violet);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-turquoise: var(--neon-turquoise);
+  --color-neon-mint: var(--neon-mint);
+  --color-neon-green: var(--neon-green);
+  --color-neon-lime: var(--neon-lime);
+  --color-neon-yellow: var(--neon-yellow);
+  --color-neon-amber: var(--neon-amber);
+  --color-neon-orange: var(--neon-orange);
+  --color-neon-red: var(--neon-red);
+  --color-neon-coral: var(--neon-coral);
+  --color-neon-peach: var(--neon-peach);
+
+  /* Bright Neon Variations */
+  --color-neon-electric-blue: var(--neon-electric-blue);
+  --color-neon-electric-purple: var(--neon-electric-purple);
+  --color-neon-electric-green: var(--neon-electric-green);
+  --color-neon-hot-pink: var(--neon-hot-pink);
+  --color-neon-laser-lemon: var(--neon-laser-lemon);
+  --color-neon-acid-green: var(--neon-acid-green);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1e1e1e;
+    --foreground: #ffffff;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* fade-in animation with 1s delay */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 1s ease-in-out forwards;
+  animation-delay: 0.7s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-150px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* fade-in animation without delay */
+
+@keyframes fadeIn1 {
+  from {
+    opacity: 0;
+    transform: translateX(-150px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in1 {
+  animation: fadeIn1 1s ease-in-out forwards;
+}
+
+/* Transform rotate-6 animaiton infinite */
+@keyframes rotateInfinite {
+  from {
+    transform: rotate(10deg);
+  }
+  to {
+    transform: rotate(-5deg);
+  }
+}
+
+.rotateInfinite {
+  animation: rotateInfinite 0.6s ease-in-out infinite alternate;
+}
