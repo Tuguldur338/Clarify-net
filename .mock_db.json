@@ -1,0 +1,41 @@
+{
+  "knowledge_posts": [
+    {
+      "id": "mbWtneSk",
+      "title": "Algebra",
+      "topic": "formula",
+      "content": "Square:\n...\n\nCubes:\n...\n\nExamples higher than Cubes:\n...",
+      "video_url": "https://www.youtube.com/watch?v=mza6QYH3oEw&t=1s"
+    },
+    {
+      "id": "7dNWMOaq",
+      "title": "Algebra",
+      "topic": "formula",
+      "content": "Square:\n...\n\nCubes:\n...\n\nExamples higher than Cubes:\n...",
+      "video_url": "https://www.youtube.com/watch?v=mza6QYH3oEw&t=1s"
+    },
+    {
+      "id": "L-PA5vjx",
+      "title": "Algebra",
+      "topic": "formula",
+      "content": "Squares:\n\nCubes:\n\nExamples of higher than Cubes:",
+      "video_url": "https://www.youtube.com/watch?v=mza6QYH3oEw"
+    },
+    {
+      "id": "RULLCnoz",
+      "title": "Algebra",
+      "topic": "formula",
+      "content": "Squares",
+      "video_url": "https://www.youtube.com/watch?v=mza6QYH3oEw",
+      "owner": "mia9j1nmtdbli0"
+    }
+  ],
+  "users": [
+    {
+      "id": "mia9j1nmtdbli0",
+      "email": "Tuguldur09252@gmail.com",
+      "name": "Tuguldur",
+      "password_hash": "3d810822eeb7012f:e8606581c12fcbb3e9b361afac91248ef783bb59ca18e9abac4741dbb77edc50d24de7e3c0adeb547b42af028e79f2c5c6c62cd0206b32cbf1f90daf9c742e0f"
+    }
+  ]
+}
