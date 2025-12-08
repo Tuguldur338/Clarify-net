@@ -20,11 +20,13 @@ export default function EditPage() {
       .then((r) => r.json())
       .then((j) => {
         const d = j?.data;
-        setPost(d);
-        setTitle(d?.title || "");
-        setTopic(d?.topic || "");
-        setContent(d?.content || "");
-        setVideoUrl(d?.video_url || "");
+        if (d) {
+          setPost(d);
+          setTitle(d.title ?? "");
+          setTopic(d.topic ?? "");
+          setContent(d.content ?? "");
+          setVideoUrl(d.video_url ?? "");
+        }
       })
       .catch((e) => setError(String(e)));
   }, [id]);

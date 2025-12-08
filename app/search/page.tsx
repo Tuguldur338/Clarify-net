@@ -55,7 +55,7 @@ export default async function SearchPage({
             <a
               key={item.id}
               href={`/p/${item.id}`}
-              className="block p-4 bg-white rounded-lg shadow hover:shadow-lg transform hover:-translate-y-1 transition !no-underline"
+              className="block p-4 bg-white rounded-lg shadow hover:shadow-lg transform hover:-translate-y-1 transition no-underline!"
             >
               <div className="flex items-center justify-between">
                 <div className="font-semibold text-lg">{item.title}</div>

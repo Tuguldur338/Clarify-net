@@ -24,7 +24,18 @@ const slides = [
 
 const Intro: React.FC = () => {
   return (
-    <div className="flex flex-col bg-gray-100 w-[90%] rounded-[16px] mt-[30px] p-6 items-center">
+    <div className="flex flex-col bg-gray-100 w-[90%] rounded-2xl mt-[750px] p-6 items-center">
+      <div>
+        <video
+          src="/images/knowledge_vid.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        />
+      </div>
+
       <h1 className="text-3xl font-semibold">Welcome to ClarifyNet!</h1>
 
       <h3 className="text-lg text-gray-600 mt-2">
@@ -32,7 +43,7 @@ const Intro: React.FC = () => {
       </h3>
 
       <Carousel
-        interval={5000}
+        interval={4000}
         pause={false}
         indicators={false}
         className="w-full max-w-[600px] mt-8"

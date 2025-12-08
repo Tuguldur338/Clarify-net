@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleLogin = async () => {
     setError(null);
@@ -25,9 +27,7 @@ export default function LoginPage() {
         return;
       }
       const user = j.data;
-      try {
-        localStorage.setItem("clarifynet_user", JSON.stringify(user));
-      } catch (e) {}
+      setUser(user); // Update AuthContext instantly
       router.push("/profile");
     } catch (err) {
       setError(String(err));

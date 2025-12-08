@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, password, name } = body;
+    const { email, password, name, profile_picture_url } = body;
     if (!email || !password) {
       return NextResponse.json(
         { error: "email and password required" },
@@ -36,7 +36,13 @@ export async function POST(req: Request) {
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     const insert = await supabase
       .from("users")
-      .insert({ id, email, name: name || null, password_hash })
+      .insert({ 
+        id, 
+        email, 
+        name: name || null, 
+        password_hash,
+        profile_picture_url: profile_picture_url || null 
+      })
       .select()
       .single();
     if (insert?.error) {
@@ -45,7 +51,12 @@ export async function POST(req: Request) {
     const user = insert.data;
     // return a safe payload (no password)
     return NextResponse.json({
-      data: { id: user.id, email: user.email, name: user.name },
+      data: { 
+        id: user.id, 
+        email: user.email, 
+        name: user.name,
+        profile_picture_url: user.profile_picture_url 
+      },
     });
   } catch (err) {
     console.error("/api/auth/register error:", err);

@@ -2,15 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Camera } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleRegister = async () => {
     setError(null);
@@ -18,7 +23,12 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          name, 
+          profile_picture_url: profilePictureUrl || null 
+        }),
       });
       const j = await res.json();
       if (!res.ok || j?.error) {
@@ -26,9 +36,7 @@ export default function RegisterPage() {
         return;
       }
       const user = j.data;
-      try {
-        localStorage.setItem("clarifynet_user", JSON.stringify(user));
-      } catch (e) {}
+      setUser(user); // Update AuthContext instantly
       router.push("/profile");
     } catch (err) {
       setError(String(err));
@@ -51,6 +59,40 @@ export default function RegisterPage() {
         placeholder="Email"
         className="border p-2 w-full rounded mb-2"
       />
+
+      <div className="mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Profile Picture (optional)
+        </label>
+        <div className="flex gap-2">
+          <input
+            value={profilePictureUrl}
+            onChange={(e) => setProfilePictureUrl(e.target.value)}
+            placeholder="Enter image URL"
+            className="border p-2 flex-1 rounded"
+          />
+          <button
+            type="button"
+            onClick={() => setShowUploadModal(true)}
+            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-all flex items-center gap-2"
+          >
+            <Camera size={18} />
+            Upload
+          </button>
+        </div>
+        {profilePictureUrl && (
+          <div className="mt-2">
+            <img
+              src={profilePictureUrl}
+              alt="Preview"
+              className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          </div>
+        )}
+      </div>
 
       <div className="relative mb-4">
         <input
@@ -77,6 +119,19 @@ export default function RegisterPage() {
       >
         Register
       </button>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <ProfilePictureUpload
+          currentPictureUrl={profilePictureUrl}
+          userName={name || "Your"}
+          onSave={async (url) => {
+            setProfilePictureUrl(url);
+            setShowUploadModal(false);
+          }}
+          onCancel={() => setShowUploadModal(false)}
+        />
+      )}
     </div>
   );
 }

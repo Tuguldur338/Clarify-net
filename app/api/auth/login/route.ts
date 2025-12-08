@@ -37,7 +37,12 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      data: { id: user.id, email: user.email, name: user.name },
+      data: { 
+        id: user.id, 
+        email: user.email, 
+        name: user.name,
+        profile_picture_url: user.profile_picture_url 
+      },
     });
   } catch (err) {
     console.error("/api/auth/login error:", err);

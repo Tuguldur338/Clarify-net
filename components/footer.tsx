@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-gray-200 py-10 mt-16">
+    <footer className="w-full bg-blue-400/50 py-10 mt-16">
       <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-10">
         {/* Brand */}
         <div>
@@ -17,23 +17,23 @@ const Footer: React.FC = () => {
               className="rounded-md w-[150px] h-[100px]"
             />
 
-            <h2 className="text-xl font-semibold">ClarifyNet</h2>
+            <h2 className="text-xl text-white font-semibold">ClarifyNet</h2>
           </div>
 
-          <p className="text-gray-600 mt-3">
+          <p className="text-white mt-3">
             A place where learning becomes clear and simple.
           </p>
         </div>
 
         {/* Links */}
         <div>
-          <h3 className="font-semibold text-lg mb-3">Navigation</h3>
+          <h3 className="font-semibold text-white text-lg mb-3">Navigation</h3>
 
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2 text-white">
             <li>
               <Link
                 href="/"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 Home
               </Link>
@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/search"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 Search
               </Link>
@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/topics"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 Topics
               </Link>
@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/about"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 About
               </Link>
@@ -70,41 +70,41 @@ const Footer: React.FC = () => {
 
         {/* Socials */}
         <div>
-          <h3 className="font-semibold text-lg mb-3">Follow</h3>
+          <h3 className="font-semibold text-white text-lg mb-3">Follow</h3>
 
           <ul className="space-y-2 text-gray-700">
             <li>
-              <a
+              <Link
                 href="#"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 Instagram
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a
+              <Link
                 href="#"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 YouTube
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a
+              <Link
                 href="#"
-                className="!no-underline text-black hover:!text-orange-300 transition-all duration-300"
+                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
               >
                 Twitter
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="mt-10 border-t border-gray-300 pt-5 text-center text-gray-600">
+      <div className="mt-10 border-t border-gray-300 pt-5 text-center text-white">
         © {new Date().getFullYear()} ClarifyNet. All rights reserved.
       </div>
     </footer>
