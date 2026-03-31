@@ -1,27 +1,27 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import PostActions from "@/components/PostActions";
+import RoleBadge from "@/components/RoleBadge";
+import MathText from "@/components/MathText";
+import { getRoleByPostCount } from "@/utils/roleUtils";
 
 export default function MyKnowledgePage() {
-  const [owner, setOwner] = useState<string | null>(null);
+  const { user } = useAuth();
   const [posts, setPosts] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    try {
-      const me = localStorage.getItem("clarifynet_owner");
-      setOwner(me);
-      if (me) fetchPosts(me);
-    } catch (e) {
-      // ignore
+    if (user?.id) {
+      fetchPosts(user.id);
     }
-  }, []);
+  }, [user]);
 
-  const fetchPosts = async (me: string) => {
+  const fetchPosts = async (userId: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/posts?owner=${encodeURIComponent(me)}`);
+      const res = await fetch(`/api/posts?owner=${encodeURIComponent(userId)}`);
       const json = await res.json();
       if (!res.ok || json?.error) {
         setPosts([]);
@@ -36,20 +36,27 @@ export default function MyKnowledgePage() {
     }
   };
 
-  if (!owner)
+  if (!user)
     return (
       <div className="p-6 max-w-3xl mx-auto">
-        <h2 className="text-xl font-semibold">No owner token</h2>
+        <h2 className="text-xl font-semibold">Not logged in</h2>
         <p className="text-sm text-gray-600">
-          You don't have a local owner token yet. Create a post and you'll be
-          able to manage it here.
+          Please log in to see your knowledge.
         </p>
       </div>
     );
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">My Knowledge</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-2">My Knowledge</h2>
+        <div className="flex items-center gap-3">
+          <RoleBadge role={getRoleByPostCount(posts?.length || 0)} size="md" />
+          <span className="text-gray-600">
+            {posts?.length || 0} posts shared
+          </span>
+        </div>
+      </div>
       {loading ? (
         <div>Loading…</div>
       ) : posts && posts.length > 0 ? (
@@ -64,7 +71,7 @@ export default function MyKnowledgePage() {
                 <PostActions id={p.id} owner={p.owner} />
               </div>
               <div className="mt-3 text-sm text-gray-700 whitespace-pre-wrap">
-                {p.content?.slice(0, 180)}
+                <MathText value={p.content?.slice(0, 180)} />
                 {p.content && p.content.length > 180 ? "..." : ""}
               </div>
             </div>

@@ -4,11 +4,11 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, title, topic, content, video_url, owner } = body;
+    const { id, title, topic, content, video_url, image_url, owner } = body;
 
     const res = await supabase
       .from("knowledge_posts")
-      .insert({ id, title, topic, content, video_url, owner })
+      .insert({ id, title, topic, content, video_url, image_url, owner })
       .select()
       .single();
 
@@ -41,7 +41,10 @@ export async function GET(req: Request) {
     }
     let query = supabase.from("knowledge_posts").select("*");
     if (owner) query = query.eq("owner", owner);
-    if (q) query = query.ilike("title", `%${q}%`);
+    if (q) {
+      // Search by both title and topic
+      query = query.or(`title.ilike.%${q}%,topic.ilike.%${q}%`);
+    }
     const res = await query.limit(200);
     if (res?.error)
       return NextResponse.json({ error: res.error }, { status: 500 });
@@ -55,7 +58,7 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, title, topic, content, video_url, owner } = body;
+    const { id, title, topic, content, video_url, image_url, owner } = body;
     if (!id)
       return NextResponse.json({ error: "id required" }, { status: 400 });
 
@@ -75,7 +78,7 @@ export async function PATCH(req: Request) {
 
     const upd = await supabase
       .from("knowledge_posts")
-      .update({ title, topic, content, video_url })
+      .update({ title, topic, content, video_url, image_url })
       .eq("id", id)
       .select()
       .single();

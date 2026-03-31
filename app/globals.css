@@ -1,5 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes:wght@400&family=Playfair+Display:wght@400;500;600;700;800;900&family=Lora:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+
+@layer utilities {
+  .bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+.gradient-link {
+  color: white;
+  transition: color 0.5s ease !important;
+}
+
+.gradient-link:hover {
+  background: linear-gradient(to right, #facc15, #ef4444, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 :root {
   --background: #171717;
@@ -77,6 +96,31 @@
   --color-neon-acid-green: var(--neon-acid-green);
 }
 
+:root {
+  --font-great-vibes: "Great Vibes", cursive;
+  --font-playfair: "Playfair Display", serif;
+  --font-lora: "Lora", serif;
+}
+
+.font-great-vibes {
+  font-family: var(--font-great-vibes);
+  font-size: 1.2em;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.font-lora {
+  font-family: var(--font-lora);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1e1e1e;
@@ -88,6 +132,7 @@ html,
 body {
   height: 100%;
   margin: 0;
+  padding: 0;
 }
 
 a {
@@ -96,6 +141,7 @@ a {
 
 body {
   font-family: Inter, Arial, Helvetica, sans-serif;
+  @apply bg-white text-black;
 }
 
 a {
@@ -103,6 +149,7 @@ a {
   color: inherit;
 }
 
+/* ANIMATIONS */
 /* fade-in animation with 1s delay */
 .fade-in {
   opacity: 0;
@@ -152,6 +199,79 @@ a {
 .rotateInfinite {
   animation: rotateInfinite 0.6s ease-in-out infinite alternate;
 }
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px rgba(251, 146, 60, 0.5),
+      0 0 20px rgba(251, 146, 60, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(251, 146, 60, 0.8),
+      0 0 40px rgba(251, 146, 60, 0.5);
+  }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.float-in {
+  animation: float-up 0.8s ease-out forwards;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(251, 146, 60, 0.1),
+    transparent
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Smooth underline that scales from center */
+.underline-grow {
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform 300ms ease-out;
+  display: block;
+}
+.group:hover .underline-grow {
+  transform: scaleX(1);
+}
+
+/* Subtle fade-in for content */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: float-up 0.7s ease-out forwards;
+}
+
+/* Carousel control icons color override */
 
 .carousel-control-prev-icon {
   color: black !important;

@@ -6,6 +6,7 @@ import { Camera, Upload, Link as LinkIcon, X } from "lucide-react";
 interface ProfilePictureUploadProps {
   currentPictureUrl?: string;
   userName: string;
+  userId?: string;
   onSave: (imageUrl: string) => Promise<void>;
   onCancel: () => void;
 }
@@ -13,6 +14,7 @@ interface ProfilePictureUploadProps {
 export default function ProfilePictureUpload({
   currentPictureUrl,
   userName,
+  userId,
   onSave,
   onCancel,
 }: ProfilePictureUploadProps) {
@@ -21,7 +23,9 @@ export default function ProfilePictureUpload({
   const [urlInput, setUrlInput] = useState<string>(currentPictureUrl || "");
   const [isDragging, setIsDragging] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileSelect = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -35,6 +39,7 @@ export default function ProfilePictureUpload({
       setPreviewUrl(e.target?.result as string);
     };
     reader.readAsDataURL(file);
+    setSelectedFile(file);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -64,17 +69,37 @@ export default function ProfilePictureUpload({
   };
 
   const handleSave = async () => {
-    const imageToSave = mode === "url" ? urlInput : previewUrl;
-    if (!imageToSave) {
-      alert("Please select or provide an image");
-      return;
-    }
-
     setSaving(true);
     try {
-      await onSave(imageToSave);
+      let imageUrl: string;
+
+      if (mode === "upload" && selectedFile) {
+        // Use the generated preview base64 URL directly so upload works in local/mock mode
+        if (!previewUrl) {
+          alert("Please select an image to upload.");
+          setSaving(false);
+          return;
+        }
+
+        imageUrl = previewUrl;
+      } else if (mode === "url") {
+        imageUrl = urlInput.trim();
+        if (!imageUrl) {
+          alert("Please provide a valid URL");
+          setSaving(false);
+          return;
+        }
+      } else {
+        alert("Please select or provide an image");
+        setSaving(false);
+        return;
+      }
+
+      await onSave(imageUrl);
+      setStatusMessage("Profile picture updated successfully!");
     } catch (e) {
-      alert("Failed to save profile picture");
+      console.error("Save error:", e);
+      setStatusMessage("Failed to save profile picture. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -122,6 +147,11 @@ export default function ProfilePictureUpload({
 
         {/* Content */}
         <div className="p-6">
+          {statusMessage ? (
+            <div className="bg-green-100 text-green-800 rounded-md p-2 mb-4 text-sm">
+              {statusMessage}
+            </div>
+          ) : null}
           {mode === "upload" ? (
             <div>
               {/* Drag & Drop Area */}

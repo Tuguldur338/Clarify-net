@@ -77,7 +77,7 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
         if (!this._results && this._table)
           this._results = (mockDb[this._table] || []).slice();
         this._results = (this._results || []).filter(
-          (r) => String(r[field]) === String(value)
+          (r) => String(r[field]) === String(value),
         );
         this.data = this._results.slice();
         return this;
@@ -96,7 +96,51 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
         return this;
       },
 
-      // mark operation as delete (actual removal happens when single() resolves)
+      or: function (query) {
+        if (!this._table) return this;
+
+        // Get fresh data from the table
+        const allData = (mockDb[this._table] || []).slice();
+
+        // Parse query like "title.ilike.%math%,topic.ilike.%math%"
+        const conditions = query.split(",");
+        const allMatches = [];
+        const seen = new Set();
+
+        allData.forEach((r) => {
+          const key = r.id || JSON.stringify(r);
+
+          conditions.forEach((condition) => {
+            if (!seen.has(key)) {
+              const parts = condition.trim().split(".");
+              if (parts.length >= 3) {
+                const field = parts[0];
+                const operator = parts[1];
+                const value = parts.slice(2).join(".");
+
+                if (operator === "ilike") {
+                  const term = String(value).replace(/%/g, "").toLowerCase();
+                  const val = String((r && r[field]) || "").toLowerCase();
+                  if (val.includes(term)) {
+                    allMatches.push(r);
+                    seen.add(key);
+                  }
+                } else if (operator === "eq") {
+                  if (String(r[field]) === String(value)) {
+                    allMatches.push(r);
+                    seen.add(key);
+                  }
+                }
+              }
+            }
+          });
+        });
+
+        this._results = allMatches;
+        this.data = this._results.slice();
+        return this;
+      },
+
       delete: function () {
         this._operation = "delete";
         return this;
@@ -140,41 +184,11 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
             fs.writeFileSync(
               mockFilePath,
               JSON.stringify(chainable._mockDb, null, 2),
-              "utf8"
+              "utf8",
             );
           } catch (e) {
             // ignore write errors
           }
-        }
-        return this;
-      },
-
-      update: function (payload) {
-        // update all rows matched by _results (or all rows in table if no filter)
-        const table = this._table;
-        if (!mockDb[table]) mockDb[table] = [];
-        if (!this._results) this._results = (mockDb[table] || []).slice();
-        const updated = [];
-        for (let i = 0; i < mockDb[table].length; i++) {
-          const row = mockDb[table][i];
-          const match = this._results.some((r) => r.id === row.id);
-          if (match) {
-            mockDb[table][i] = Object.assign({}, row, payload);
-            updated.push(mockDb[table][i]);
-          }
-        }
-        this._results = updated.slice();
-        this.data = this._results.slice();
-        // persist
-        if (isServer && mockFilePath) {
-          try {
-            const fs = require("fs");
-            fs.writeFileSync(
-              mockFilePath,
-              JSON.stringify(chainable._mockDb, null, 2),
-              "utf8"
-            );
-          } catch (e) {}
         }
         return this;
       },
@@ -185,10 +199,10 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
         if (!mockDb[table]) mockDb[table] = [];
         if (!this._results) this._results = (mockDb[table] || []).slice();
         const toKeep = (mockDb[table] || []).filter(
-          (r) => !this._results.some((rr) => rr.id === r.id)
+          (r) => !this._results.some((rr) => rr.id === r.id),
         );
         const deleted = (mockDb[table] || []).filter((r) =>
-          this._results.some((rr) => rr.id === r.id)
+          this._results.some((rr) => rr.id === r.id),
         );
         chainable._mockDb[table] = toKeep;
         this._results = deleted.slice();
@@ -200,7 +214,7 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
             fs.writeFileSync(
               mockFilePath,
               JSON.stringify(chainable._mockDb, null, 2),
-              "utf8"
+              "utf8",
             );
           } catch (e) {}
         }
@@ -232,7 +246,7 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
               fs.writeFileSync(
                 mockFilePath,
                 JSON.stringify(chainable._mockDb, null, 2),
-                "utf8"
+                "utf8",
               );
             } catch (e) {}
           }
@@ -265,7 +279,7 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
               fs.writeFileSync(
                 mockFilePath,
                 JSON.stringify(chainable._mockDb, null, 2),
-                "utf8"
+                "utf8",
               );
             } catch (e) {}
           }

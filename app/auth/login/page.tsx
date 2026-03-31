@@ -27,7 +27,13 @@ export default function LoginPage() {
         return;
       }
       const user = j.data;
-      setUser(user); // Update AuthContext instantly
+      // Fetch fresh user record in case any cached value is stale
+      const fresh = await fetch(`/api/user/${user.id}`).then((r) => r.json());
+      if (fresh?.data) {
+        setUser(fresh.data);
+      } else {
+        setUser(user);
+      }
       router.push("/profile");
     } catch (err) {
       setError(String(err));

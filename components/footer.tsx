@@ -10,11 +10,11 @@ const Footer: React.FC = () => {
         <div>
           <div className="flex items-center gap-3">
             <Image
-              src="/images/website-logo.png"
+              src="/images/website_logo_1.jpeg"
               alt="ClarifyNet logo"
               width={500}
               height={500}
-              className="rounded-md w-[150px] h-[100px]"
+              className="rounded-full w-[100px] h-[100px]"
             />
 
             <h2 className="text-xl text-white font-semibold">ClarifyNet</h2>

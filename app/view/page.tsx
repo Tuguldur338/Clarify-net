@@ -1,3 +1,4 @@
+import MathText from "@/components/MathText";
 import { supabase } from "@/utils/supabaseClient";
 
 export default async function ViewPage({
@@ -57,7 +58,9 @@ export default async function ViewPage({
     <div className="p-6 max-w-3xl mx-auto space-y-4">
       <h1 className="text-3xl font-bold">{data.title}</h1>
       <p className="text-gray-500">Topic: {data.topic}</p>
-      <div className="whitespace-pre-wrap">{data.content}</div>
+      <div className="whitespace-pre-wrap">
+        <MathText value={data.content} />
+      </div>
 
       {data.video_url ? (
         <div className="mt-4">
@@ -65,7 +68,7 @@ export default async function ViewPage({
           <div className="w-full aspect-video">
             <iframe
               src={`https://www.youtube.com/embed/${extractYouTubeId(
-                data.video_url
+                data.video_url,
               )}`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

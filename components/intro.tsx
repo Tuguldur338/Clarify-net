@@ -1,71 +1,81 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Carousel, CarouselItem } from "react-bootstrap";
+import { Card } from "react-bootstrap";
+import MathText from "@/components/MathText";
 
-const slides = [
-  {
-    src: "/images/girl-looking-at-computer.jpg",
-    title: "Learn Faster",
-    desc: "Clear explanations to help you understand anything.",
-  },
-  {
-    src: "/images/knowledge-book.jpg",
-    title: "Explore Concepts",
-    desc: "Dive into topics with structured, simple lessons.",
-  },
-  {
-    src: "/images/math-algebra.jpg",
-    title: "Search Smarter",
-    desc: "Find explanations instantly across subjects.",
-  },
-];
+interface KnowledgePost {
+  id: string;
+  title: string;
+  topic: string;
+  content: string;
+  owner?: string;
+}
 
 const Intro: React.FC = () => {
+  const [posts, setPosts] = useState<KnowledgePost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/posts")
+      .then((res) => res.json())
+      .then((json) => {
+        if (Array.isArray(json?.data)) {
+          setPosts(json.data.slice(0, 4));
+        }
+      })
+      .catch((err) => console.error("Failed to load posts:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <div className="flex flex-col bg-gray-100 w-[90%] rounded-2xl mt-[750px] p-6 items-center">
-      <div>
-        <video
-          src="/images/knowledge_vid.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-      </div>
+    <section className="bg-gray-50 py-12 md:py-16">
+      <div className="mx-auto max-w-5xl px-4 md:px-0">
+        <div className="rounded-2xl bg-white border border-gray-200 shadow-sm p-6 md:p-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-900">
+            Welcome to ClarifyNet!
+          </h1>
+          <p className="mt-3 text-center text-gray-600 md:text-lg">
+            Discover what people are sharing in algebra, science, and more.
+          </p>
 
-      <h1 className="text-3xl font-semibold">Welcome to ClarifyNet!</h1>
-
-      <h3 className="text-lg text-gray-600 mt-2">
-        Get started by searching Algebra and more.
-      </h3>
-
-      <Carousel
-        interval={4000}
-        pause={false}
-        indicators={false}
-        className="w-full max-w-[600px] mt-8"
-      >
-        {slides.map((slide, i) => (
-          <CarouselItem key={i}>
-            <div className="flex flex-col items-center p-4">
-              <Image
-                src={slide.src}
-                alt={slide.title}
-                width={600}
-                height={400}
-                className="rounded-xl object-cover"
-              />
-
-              <h2 className="text-2xl mt-4 font-semibold">{slide.title}</h2>
-              <p className="text-gray-600 text-center">{slide.desc}</p>
+          {loading ? (
+            <div className="italic text-gray-500">
+              Loading latest knowledge...
             </div>
-          </CarouselItem>
-        ))}
-      </Carousel>
-    </div>
+          ) : posts.length === 0 ? (
+            <div className="text-gray-500">No recent posts yet.</div>
+          ) : (
+            posts.map((post) => (
+              <a
+                href={`/p/${post.id}`}
+                key={post.id}
+                className="block h-full no-underline hover:no-underline"
+                style={{ textDecoration: "none" }}
+              >
+                <Card className="h-full shadow-sm border border-gray-200 hover:border-blue-400 hover:shadow-xl transform hover:-translate-y-2 transition-all duration-200">
+                  <Card.Body>
+                    <Card.Title className="text-lg font-semibold text-slate-900">
+                      {post.title}
+                    </Card.Title>
+
+                    <Card.Subtitle className="mb-2 text-sm text-gray-500">
+                      {post.topic}
+                    </Card.Subtitle>
+
+                    <Card.Text className="text-sm text-gray-700 whitespace-pre-wrap">
+                      <MathText value={post.content?.slice(0, 140)} />
+                      {post.content?.length > 140 ? "..." : ""}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </a>
+            ))
+          )}
+        </div>
+      </div>
+    </section>
   );
 };
 

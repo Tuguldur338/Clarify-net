@@ -11,6 +11,7 @@ export default function EditPage() {
   const [topic, setTopic] = useState("");
   const [content, setContent] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -26,6 +27,7 @@ export default function EditPage() {
           setTopic(d.topic ?? "");
           setContent(d.content ?? "");
           setVideoUrl(d.video_url ?? "");
+          setImageUrl(d.image_url ?? "");
         }
       })
       .catch((e) => setError(String(e)));
@@ -45,6 +47,7 @@ export default function EditPage() {
           topic,
           content,
           video_url: videoUrl || null,
+          image_url: imageUrl || null,
           owner,
         }),
       });
@@ -81,8 +84,18 @@ export default function EditPage() {
         className="border p-2 w-full h-40 rounded"
       />
       <input
+        value={imageUrl}
+        onChange={(e) => setImageUrl(e.target.value)}
+        placeholder="Image URL (optional)"
+        className="border p-2 w-full rounded"
+      />
+      {imageUrl && (
+        <img src={imageUrl} alt="preview" className="max-w-xs max-h-48 rounded border object-cover" />
+      )}
+      <input
         value={videoUrl}
         onChange={(e) => setVideoUrl(e.target.value)}
+        placeholder="Video URL - YouTube, Vimeo, Dailymotion, or any video link (optional)"
         className="border p-2 w-full rounded"
       />
       <div className="flex gap-2">

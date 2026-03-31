@@ -4,20 +4,53 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
+import RoleBadge from "@/components/RoleBadge";
+import MathText from "@/components/MathText";
 import { Camera } from "lucide-react";
+import { getRoleByPostCount } from "@/utils/roleUtils";
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
+  const [appliedPosts, setAppliedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [pictureUpdateKey, setPictureUpdateKey] = useState(Date.now());
   const router = useRouter();
 
+  const loadAppliedPosts = async (userId: string) => {
+    try {
+      const stored =
+        localStorage.getItem(`clarifynet.appliedPosts.${userId}`) || "[]";
+      const appliedIds: string[] = Array.isArray(JSON.parse(stored))
+        ? JSON.parse(stored)
+        : [];
+
+      if (appliedIds.length === 0) {
+        setAppliedPosts([]);
+        return;
+      }
+
+      const postResults = await Promise.all(
+        appliedIds.map((id) =>
+          fetch(`/api/posts?id=${encodeURIComponent(id)}`)
+            .then((r) => r.json())
+            .then((j) => j?.data)
+            .catch(() => null),
+        ),
+      );
+
+      setAppliedPosts(postResults.filter((x) => x));
+    } catch (e) {
+      console.error("Failed to load applied posts:", e);
+      setAppliedPosts([]);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
-    
-    // Fetch fresh user data from database to ensure profile picture is current
+
+    // Refresh author data
     fetch(`/api/user/${user.id}`)
       .then((r) => r.json())
       .then((j) => {
@@ -26,7 +59,7 @@ export default function ProfilePage() {
         }
       })
       .catch((e) => console.error("Failed to refresh user data:", e));
-    
+
     setLoading(true);
     fetch(`/api/posts?owner=${encodeURIComponent(user.id)}`)
       .then((r) => r.json())
@@ -34,7 +67,10 @@ export default function ProfilePage() {
         setPosts(j?.data || []);
       })
       .catch((e) => console.error(e))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        loadAppliedPosts(user.id);
+      });
   }, [user?.id]);
 
   const handleDelete = async (id: string) => {
@@ -60,7 +96,10 @@ export default function ProfilePage() {
   const handleUpdatePicture = async (imageUrl: string) => {
     if (!user) return;
 
-    console.log('Updating profile picture with URL:', imageUrl.substring(0, 100));
+    console.log(
+      "Updating profile picture with URL:",
+      imageUrl.substring(0, 100),
+    );
 
     try {
       // Save to database
@@ -74,8 +113,8 @@ export default function ProfilePage() {
       });
 
       const json = await res.json();
-      console.log('Update response:', json);
-      
+      console.log("Update response:", json);
+
       if (!res.ok || json?.error) {
         alert(json?.error || "Failed to update profile picture");
         return;
@@ -83,8 +122,16 @@ export default function ProfilePage() {
 
       // Update local state with data from database
       const updatedUser = json.data;
-      console.log('Updated user:', updatedUser);
-      setUser(updatedUser);
+      console.log("Updated user:", updatedUser);
+      // Read fresh user record from API to avoid session mix
+      const refreshed = await fetch(`/api/user/${user.id}`).then((r) =>
+        r.json(),
+      );
+      if (refreshed?.data) {
+        setUser(refreshed.data);
+      } else {
+        setUser(updatedUser);
+      }
       setPictureUpdateKey(Date.now()); // Force image reload
       setShowUploadModal(false);
     } catch (e) {
@@ -107,16 +154,17 @@ export default function ProfilePage() {
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-white">
             {user.profile_picture_url ? (
               <img
-                src={`${user.profile_picture_url}${user.profile_picture_url.includes('?') ? '&' : '?'}t=${pictureUpdateKey}`}
+                src={
+                  user.profile_picture_url.startsWith("data:")
+                    ? user.profile_picture_url
+                    : `${user.profile_picture_url}${user.profile_picture_url.includes("?") ? "&" : "?"}t=${pictureUpdateKey}&u=${user.id}`
+                }
                 alt={user.name || "Profile"}
                 className="w-full h-full object-cover"
-                key={pictureUpdateKey}
+                key={`${pictureUpdateKey}-${user.id}-${user.profile_picture_url}`}
                 onError={(e) => {
-                  console.error('Failed to load profile picture:', user.profile_picture_url);
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-                onLoad={() => {
-                  console.log('Profile picture loaded successfully');
+                  // Silently hide the image if it fails to load
+                  (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
             ) : (
@@ -135,7 +183,13 @@ export default function ProfilePage() {
         </div>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">{user.name || user.email}</h1>
-          <p className="text-sm text-gray-600 mb-2">{user.email}</p>
+          <p className="text-sm text-gray-600 mb-3">{user.email}</p>
+          <div className="flex items-center gap-3 mb-3">
+            <RoleBadge role={getRoleByPostCount(posts.length)} size="md" />
+            <span className="text-sm text-gray-600">
+              {posts.length} {posts.length === 1 ? "post" : "posts"} shared
+            </span>
+          </div>
           <button
             onClick={() => setShowUploadModal(true)}
             className="text-sm text-blue-600 hover:underline font-medium"
@@ -151,6 +205,7 @@ export default function ProfilePage() {
         <ProfilePictureUpload
           currentPictureUrl={user.profile_picture_url}
           userName={user.name || user.email}
+          userId={user.id}
           onSave={handleUpdatePicture}
           onCancel={() => setShowUploadModal(false)}
         />
@@ -195,6 +250,36 @@ export default function ProfilePage() {
       {posts.length === 0 && !loading ? (
         <div className="text-sm text-gray-600 mt-4">You have no posts yet.</div>
       ) : null}
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-3">Applied knowledge</h2>
+        {loading ? (
+          <div>Loading applied posts...</div>
+        ) : appliedPosts.length > 0 ? (
+          <ul className="space-y-3">
+            {appliedPosts.map((p) => (
+              <li key={p.id} className="p-3 border rounded bg-gray-50">
+                <div className="font-semibold">{p.title}</div>
+                <div className="text-sm text-gray-500">{p.topic}</div>
+                <p className="text-sm text-gray-700 mt-1">
+                  <MathText value={p.content?.slice(0, 120)} />
+                  {p.content && p.content.length > 120 ? "..." : ""}
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => router.push(`/p/${p.id}`)}
+                    className="text-sm px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
+                  >
+                    View
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-sm text-gray-600">No applied posts yet.</div>
+        )}
+      </div>
     </div>
   );
 }

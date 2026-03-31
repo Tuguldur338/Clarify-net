@@ -35,8 +35,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateUser = (newUser: User | null) => {
     setUser(newUser);
     try {
+      // global key for compatibility
       if (newUser) {
         localStorage.setItem("clarifynet_user", JSON.stringify(newUser));
+        localStorage.setItem(
+          `clarifynet_user_${newUser.id}`,
+          JSON.stringify(newUser),
+        );
       } else {
         localStorage.removeItem("clarifynet_user");
       }
@@ -47,16 +52,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     updateUser(null);
-    // Clear any cached profile picture data
-    if (typeof window !== 'undefined') {
-      // Force reload profile pictures by clearing service worker cache if present
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          names.forEach(name => {
-            caches.delete(name);
-          });
-        });
-      }
+    try {
+      localStorage.removeItem("clarifynet_user");
+    } catch (e) {
+      console.error("Failed to remove localStorage on logout", e);
+    }
+
+    if (typeof window !== "undefined" && "caches" in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => caches.delete(name));
+      });
     }
   };
 
