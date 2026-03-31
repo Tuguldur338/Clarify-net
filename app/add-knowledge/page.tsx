@@ -29,6 +29,8 @@ export default function AddPage() {
     "english",
     "history",
     "pe",
+    "sport",
+    "vehicle",
     "computer science",
     "programming",
     "biology",
@@ -236,8 +238,9 @@ export default function AddPage() {
             }`}
           />
           <p className="text-sm text-gray-500 mt-1">
-            Valid subjects: Math, Science, English, History, PE, Computer
-            Science, Programming, Art, Music, Geography, Economics, Psychology
+            Valid subjects: Math, Science, English, History, PE, Sport, Vehicle,
+            Computer Science, Programming, Art, Music, Geography, Economics,
+            Psychology
           </p>
           {error?.includes("not a valid subject") && (
             <p className="text-red-600 text-sm mt-2 font-semibold">{error}</p>

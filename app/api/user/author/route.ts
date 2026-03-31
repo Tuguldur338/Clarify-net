@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     // Get user info
     const userRes = await supabase
       .from("users")
-      .select("id,email,name,profile_picture_url")
+      .select("id,email,name,profile_picture_url,role")
       .eq("id", userId)
       .single();
 
@@ -32,6 +32,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       data: {
         ...userRes.data,
+        role: userRes.data.role || "USER",
         postCount,
       },
     });

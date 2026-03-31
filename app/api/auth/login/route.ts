@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return NextResponse.json(
         { error: "email and password required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     if (!salt || !stored) {
       return NextResponse.json(
         { error: "Invalid stored password" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     const hash = crypto
@@ -37,11 +37,12 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      data: { 
-        id: user.id, 
-        email: user.email, 
+      data: {
+        id: user.id,
+        email: user.email,
         name: user.name,
-        profile_picture_url: user.profile_picture_url 
+        profile_picture_url: user.profile_picture_url,
+        role: user.role || "USER",
       },
     });
   } catch (err) {

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import PostActions from "@/components/PostActions";
 import RoleBadge from "@/components/RoleBadge";
 import MathText from "@/components/MathText";
-import { getRoleByPostCount } from "@/utils/roleUtils";
+import { getRoleByName, getRoleByPostCount } from "@/utils/roleUtils";
 
 export default function PostPage() {
   const params = useParams();
@@ -119,12 +119,13 @@ export default function PostPage() {
                 {(() => {
                   const rawCount = author.postCount ?? 0;
                   const safeCount = Math.max(rawCount, 1);
+                  const authorRole =
+                    author.role && author.role !== ""
+                      ? getRoleByName(author.role)
+                      : getRoleByPostCount(safeCount);
                   return (
                     <>
-                      <RoleBadge
-                        role={getRoleByPostCount(safeCount)}
-                        size="sm"
-                      />
+                      <RoleBadge role={authorRole} size="sm" />
                       <span className="text-sm text-gray-600">
                         {safeCount} posts
                       </span>

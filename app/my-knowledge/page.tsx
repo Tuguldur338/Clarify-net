@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import PostActions from "@/components/PostActions";
 import RoleBadge from "@/components/RoleBadge";
 import MathText from "@/components/MathText";
-import { getRoleByPostCount } from "@/utils/roleUtils";
+import { getRoleByName, getRoleByPostCount } from "@/utils/roleUtils";
 
 export default function MyKnowledgePage() {
   const { user } = useAuth();
@@ -51,7 +51,14 @@ export default function MyKnowledgePage() {
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">My Knowledge</h2>
         <div className="flex items-center gap-3">
-          <RoleBadge role={getRoleByPostCount(posts?.length || 0)} size="md" />
+          <RoleBadge
+            role={
+              user?.role
+                ? getRoleByName(user.role)
+                : getRoleByPostCount(posts?.length || 0)
+            }
+            size="md"
+          />
           <span className="text-gray-600">
             {posts?.length || 0} posts shared
           </span>

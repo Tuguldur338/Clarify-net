@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return NextResponse.json(
         { error: "email and password required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     if (existing && existing.data) {
       return NextResponse.json(
         { error: "User already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -34,14 +34,25 @@ export async function POST(req: Request) {
     const password_hash = `${salt}:${hash}`;
 
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+    const developerExists = await supabase
+      .from("users")
+      .select("id")
+      .or("role.eq.DEVELOPER,role.eq.ADMIN")
+      .limit(1)
+      .single();
+
+    const defaultRole = developerExists?.data ? "USER" : "DEVELOPER";
+
     const insert = await supabase
       .from("users")
-      .insert({ 
-        id, 
-        email, 
-        name: name || null, 
+      .insert({
+        id,
+        email,
+        name: name || null,
         password_hash,
-        profile_picture_url: profile_picture_url || null 
+        profile_picture_url: profile_picture_url || null,
+        role: defaultRole,
       })
       .select()
       .single();
@@ -51,11 +62,12 @@ export async function POST(req: Request) {
     const user = insert.data;
     // return a safe payload (no password)
     return NextResponse.json({
-      data: { 
-        id: user.id, 
-        email: user.email, 
+      data: {
+        id: user.id,
+        email: user.email,
         name: user.name,
-        profile_picture_url: user.profile_picture_url 
+        profile_picture_url: user.profile_picture_url,
+        role: user.role || "USER",
       },
     });
   } catch (err) {

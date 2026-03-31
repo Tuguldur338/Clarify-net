@@ -7,7 +7,7 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import RoleBadge from "@/components/RoleBadge";
 import MathText from "@/components/MathText";
 import { Camera } from "lucide-react";
-import { getRoleByPostCount } from "@/utils/roleUtils";
+import { getRoleByName, getRoleByPostCount } from "@/utils/roleUtils";
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
@@ -16,7 +16,14 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [pictureUpdateKey, setPictureUpdateKey] = useState(Date.now());
+  const [targetUserId, setTargetUserId] = useState("");
+  const [targetRole, setTargetRole] = useState("USER");
+  const [adminMessage, setAdminMessage] = useState("");
   const router = useRouter();
+
+  const isAdmin =
+    (user?.role || "USER").toUpperCase() === "ADMIN" ||
+    (user?.role || "USER").toUpperCase() === "DEVELOPER";
 
   const loadAppliedPosts = async (userId: string) => {
     try {
@@ -140,6 +147,60 @@ export default function ProfilePage() {
     }
   };
 
+  const assignBadgeRole = async () => {
+    if (!isAdmin) {
+      setAdminMessage("Only ADMIN or DEVELOPER users can assign roles.");
+      return;
+    }
+
+    if (!targetUserId.trim()) {
+      setAdminMessage("Please provide a target user ID.");
+      return;
+    }
+
+    if (!targetRole.trim()) {
+      setAdminMessage("Please select a role to assign.");
+      return;
+    }
+
+    try {
+      if (!user) {
+        setAdminMessage("No signed-in user. Login required.");
+        return;
+      }
+
+      const res = await fetch("/api/user/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: targetUserId,
+          role: targetRole,
+          actingUserId: user.id,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || json?.error) {
+        setAdminMessage(json?.error || "Failed to update user role.");
+        return;
+      }
+
+      setAdminMessage(
+        `Successfully set role for user ${targetUserId} to ${targetRole}.`,
+      );
+
+      // If this was targetting the current user, refresh user state.
+      if (targetUserId === user.id && json?.data) {
+        setUser(json.data);
+      }
+    } catch (error) {
+      console.error("Role update error:", error);
+      setAdminMessage("Failed to update user role.");
+    }
+  };
+
   if (!user)
     return (
       <div className="p-6 max-w-3xl mx-auto">
@@ -185,7 +246,14 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold">{user.name || user.email}</h1>
           <p className="text-sm text-gray-600 mb-3">{user.email}</p>
           <div className="flex items-center gap-3 mb-3">
-            <RoleBadge role={getRoleByPostCount(posts.length)} size="md" />
+            <RoleBadge
+              role={
+                user.role
+                  ? getRoleByName(user.role)
+                  : getRoleByPostCount(posts.length)
+              }
+              size="md"
+            />
             <span className="text-sm text-gray-600">
               {posts.length} {posts.length === 1 ? "post" : "posts"} shared
             </span>
@@ -198,6 +266,56 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      {isAdmin && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
+          <h3 className="text-lg font-semibold mb-2">
+            Role Management (Admin/Developer)
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            You have badge-management permissions as{" "}
+            <strong>{user.role}</strong>. If you remove your own{" "}
+            <strong>Developer</strong> role, this panel will no longer be
+            visible.
+          </p>
+          <p className="text-sm text-blue-700 mb-3">
+            Need Developer first? If no Developer exists, the first registered
+            user gets Developer by default (you can log in and confirm).
+          </p>
+          <div className="space-y-2">
+            <input
+              value={targetUserId}
+              onChange={(e) => setTargetUserId(e.target.value)}
+              placeholder="Target user ID"
+              className="border p-2 rounded w-full"
+            />
+            <select
+              value={targetRole}
+              onChange={(e) => setTargetRole(e.target.value)}
+              className="border p-2 rounded w-full"
+            >
+              <option value="USER">User</option>
+              <option value="BEGINNER">Beginner</option>
+              <option value="CONTRIBUTOR">Contributor</option>
+              <option value="EXPERT">Expert</option>
+              <option value="MASTER">Master</option>
+              <option value="CONTENT_CREATOR">Content Creator</option>
+              <option value="ADMIN">Admin</option>
+              <option value="DEVELOPER">Developer</option>
+            </select>
+            <button
+              onClick={assignBadgeRole}
+              className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+            >
+              Assign role
+            </button>
+            {adminMessage && (
+              <div className="text-sm text-gray-700">{adminMessage}</div>
+            )}
+          </div>
+        </div>
+      )}
+
       <h2 className="text-xl font-semibold mb-4">Your published knowledge</h2>
 
       {/* Upload Modal */}
