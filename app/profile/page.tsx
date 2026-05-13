@@ -93,12 +93,13 @@ export default function ProfilePage() {
   }, [user?.id]);
 
   const handleDelete = async () => {
-    if (!deleteId) return;
+    const ownerId = user?.id;
+    if (!deleteId || !ownerId) return;
     try {
       const res = await fetch(`/api/posts/${deleteId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ owner: user?.id }),
+        body: JSON.stringify({ owner: ownerId }),
       });
       const j = await res.json();
       if (!res.ok || j?.error) {
@@ -109,7 +110,7 @@ export default function ProfilePage() {
       }
       setPosts((p) => p.filter((x) => x.id !== deleteId));
       // Re-fetch posts to ensure UI is up to date
-      fetch(`/api/posts?owner=${encodeURIComponent(user.id)}`)
+      fetch(`/api/posts?owner=${encodeURIComponent(ownerId)}`)
         .then((r) => r.json())
         .then((j) => {
           setPosts(j?.data || []);
