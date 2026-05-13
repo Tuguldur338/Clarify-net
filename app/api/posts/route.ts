@@ -111,11 +111,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
 
-    const d = await supabase
-      .from("knowledge_posts")
-      .del()
-      .eq("id", id)
-      .single();
+    const d = await supabase.from("knowledge_posts").delete().eq("id", id);
     if (d?.error) return NextResponse.json({ error: d.error }, { status: 500 });
     return NextResponse.json({ data: d.data });
   } catch (err) {

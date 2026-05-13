@@ -1,5 +1,6 @@
 import { supabase } from "@/utils/supabaseClient";
 import { NextResponse } from "next/server";
+import { attachSessionCookie } from "@/utils/authCookies";
 
 export async function POST(req: Request) {
   try {
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       data: {
         id: user.id,
         email: user.email,
@@ -45,6 +46,8 @@ export async function POST(req: Request) {
         role: user.role || "USER",
       },
     });
+    attachSessionCookie(response, user.id);
+    return response;
   } catch (err) {
     console.error("/api/auth/login error:", err);
     return NextResponse.json({ error: String(err) }, { status: 500 });

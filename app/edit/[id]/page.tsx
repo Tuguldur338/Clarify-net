@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EditPage() {
   const params = useParams();
   const id = params?.id as string;
+  const { user } = useAuth();
   const [post, setPost] = useState<any>(null);
   const [title, setTitle] = useState("");
   const [topic, setTopic] = useState("");
@@ -36,8 +38,7 @@ export default function EditPage() {
   const handleSave = async () => {
     setError(null);
     try {
-      const u = localStorage.getItem("clarifynet_user");
-      const owner = u ? JSON.parse(u).id : null;
+      const owner = user?.id || null;
       const res = await fetch("/api/posts", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -90,7 +91,11 @@ export default function EditPage() {
         className="border p-2 w-full rounded"
       />
       {imageUrl && (
-        <img src={imageUrl} alt="preview" className="max-w-xs max-h-48 rounded border object-cover" />
+        <img
+          src={imageUrl}
+          alt="preview"
+          className="max-w-xs max-h-48 rounded border object-cover"
+        />
       )}
       <input
         value={videoUrl}

@@ -40,11 +40,11 @@ export default function About() {
 
           <div className="flex items-center justify-center">
             <Image
-              src="/images/website-logo.png"
+              src="/images/website_logo_1.jpeg"
               alt="website-logo"
               width={500}
               height={500}
-              className="w-[300px] h-[200px]"
+              className="w-[300px] h-[300px] rounded-2xl"
             />
           </div>
         </div>

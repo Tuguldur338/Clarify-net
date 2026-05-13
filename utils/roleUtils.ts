@@ -32,9 +32,9 @@ export const ROLES: Record<string, UserRole> = {
  * - 8+ posts: "Master"
  */
 export function getRoleByPostCount(postCount: number): UserRole {
-  if (postCount >= 8) return ROLES.MASTER;
-  if (postCount >= 4) return ROLES.EXPERT;
-  if (postCount >= 2) return ROLES.CONTRIBUTOR;
+  if (postCount >= 14) return ROLES.MASTER;
+  if (postCount >= 8) return ROLES.EXPERT;
+  if (postCount >= 4) return ROLES.CONTRIBUTOR;
   if (postCount >= 1) return ROLES.BEGINNER;
   return ROLES.USER;
 }

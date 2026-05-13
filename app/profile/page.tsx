@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import RoleBadge from "@/components/RoleBadge";
 import MathText from "@/components/MathText";
 import { Camera } from "lucide-react";
-import { getRoleByName, getRoleByPostCount } from "@/utils/roleUtils";
+import { getRoleByPostCount, getUserRole } from "@/utils/roleUtils";
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
@@ -18,12 +18,24 @@ export default function ProfilePage() {
   const [pictureUpdateKey, setPictureUpdateKey] = useState(Date.now());
   const [targetUserId, setTargetUserId] = useState("");
   const [targetRole, setTargetRole] = useState("USER");
-  const [adminMessage, setAdminMessage] = useState("");
+  const [adminMessage, setAdminMessage] = useState<string | React.ReactNode>(
+    "",
+  );
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const router = useRouter();
+
+  const currentRole = user
+    ? getUserRole(posts.length, user.role)
+    : getRoleByPostCount(posts.length);
 
   const isAdmin =
     (user?.role || "USER").toUpperCase() === "ADMIN" ||
     (user?.role || "USER").toUpperCase() === "DEVELOPER";
+  const isDeveloperRole = (user?.role || "USER").toUpperCase() === "DEVELOPER";
+
+  const isContentCreator = currentRole.title === "Content Creator";
+  const isDeveloperUser = currentRole.title === "Developer";
 
   const loadAppliedPosts = async (userId: string) => {
     try {
@@ -80,24 +92,42 @@ export default function ProfilePage() {
       });
   }, [user?.id]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this post?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch("/api/posts", {
+      const res = await fetch(`/api/posts/${deleteId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, owner: user?.id }),
+        body: JSON.stringify({ owner: user?.id }),
       });
       const j = await res.json();
       if (!res.ok || j?.error) {
         alert(j?.error || "Delete failed");
+        setShowConfirmDelete(false);
+        setDeleteId(null);
         return;
       }
-      setPosts((p) => p.filter((x) => x.id !== id));
+      setPosts((p) => p.filter((x) => x.id !== deleteId));
+      // Re-fetch posts to ensure UI is up to date
+      fetch(`/api/posts?owner=${encodeURIComponent(user.id)}`)
+        .then((r) => r.json())
+        .then((j) => {
+          setPosts(j?.data || []);
+        })
+        .catch((e) => console.error(e));
+      setShowConfirmDelete(false);
+      setDeleteId(null);
     } catch (e) {
       console.error(e);
       alert("Delete failed");
+      setShowConfirmDelete(false);
+      setDeleteId(null);
     }
+  };
+
+  const openDeleteConfirm = (id: string) => {
+    setDeleteId(id);
+    setShowConfirmDelete(true);
   };
 
   const handleUpdatePicture = async (imageUrl: string) => {
@@ -154,7 +184,7 @@ export default function ProfilePage() {
     }
 
     if (!targetUserId.trim()) {
-      setAdminMessage("Please provide a target user ID.");
+      setAdminMessage("Please provide a target user ID, email, or name.");
       return;
     }
 
@@ -169,13 +199,43 @@ export default function ProfilePage() {
         return;
       }
 
+      let targetId = targetUserId.trim();
+      let targetLabel = targetId;
+      let lookupUrl: string;
+
+      if (targetId.includes("@")) {
+        lookupUrl = `/api/user?email=${encodeURIComponent(targetId)}`;
+      } else if (/^[0-9a-fA-F-]{36}$/.test(targetId)) {
+        lookupUrl = `/api/user?id=${encodeURIComponent(targetId)}`;
+      } else {
+        lookupUrl = `/api/user?name=${encodeURIComponent(targetId)}`;
+      }
+
+      const lookupRes = await fetch(lookupUrl);
+      const lookupJson = await lookupRes.json();
+      if (!lookupRes.ok || lookupJson?.error || !lookupJson?.data) {
+        setAdminMessage(
+          lookupJson?.error ||
+            `Could not find a user with ${
+              targetId.includes("@")
+                ? "that email"
+                : /^[0-9a-fA-F-]{36}$/.test(targetId)
+                  ? "that user ID"
+                  : "that name"
+            }.`,
+        );
+        return;
+      }
+      targetId = lookupJson.data.id;
+      targetLabel = lookupJson.data.name || lookupJson.data.email || targetId;
+
       const res = await fetch("/api/user/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: targetUserId,
+          userId: targetId,
           role: targetRole,
           actingUserId: user.id,
         }),
@@ -188,11 +248,21 @@ export default function ProfilePage() {
       }
 
       setAdminMessage(
-        `Successfully set role for user ${targetUserId} to ${targetRole}.`,
+        <span>
+          Successfully set role for user {targetLabel} to {targetRole}.{" "}
+          <a
+            href={`/profile/${targetId}`}
+            className="text-blue-600 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View profile →
+          </a>
+        </span>,
       );
 
-      // If this was targetting the current user, refresh user state.
-      if (targetUserId === user.id && json?.data) {
+      // If this was targeting the current user, refresh user state.
+      if (targetId === user.id && json?.data) {
         setUser(json.data);
       }
     } catch (error) {
@@ -246,18 +316,18 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold">{user.name || user.email}</h1>
           <p className="text-sm text-gray-600 mb-3">{user.email}</p>
           <div className="flex items-center gap-3 mb-3">
-            <RoleBadge
-              role={
-                user.role
-                  ? getRoleByName(user.role)
-                  : getRoleByPostCount(posts.length)
-              }
-              size="md"
-            />
+            <RoleBadge role={currentRole} size="md" />
             <span className="text-sm text-gray-600">
               {posts.length} {posts.length === 1 ? "post" : "posts"} shared
             </span>
           </div>
+          <p className="text-sm text-gray-700 mb-3 max-w-2xl">
+            {isContentCreator
+              ? "You are a verified Content Creator. This badge is a trusted creator signal and helps your content stand out."
+              : isDeveloperUser
+                ? "You have the Developer badge, which is the highest-level app role for managing badges and experience."
+                : "Your badge reflects your current contribution level. Content Creator is a verified creator role, while Developer is the top-level app role."}
+          </p>
           <button
             onClick={() => setShowUploadModal(true)}
             className="text-sm text-blue-600 hover:underline font-medium"
@@ -274,9 +344,9 @@ export default function ProfilePage() {
           </h3>
           <p className="text-sm text-gray-600 mb-3">
             You have badge-management permissions as{" "}
-            <strong>{user.role}</strong>. If you remove your own{" "}
-            <strong>Developer</strong> role, this panel will no longer be
-            visible.
+            <strong>{user.role || "User"}</strong>. Developer is the top-level
+            owner role, while Content Creator is the verified creator badge.
+            Your team can assign both if needed.
           </p>
           <p className="text-sm text-blue-700 mb-3">
             Need Developer first? If no Developer exists, the first registered
@@ -286,7 +356,7 @@ export default function ProfilePage() {
             <input
               value={targetUserId}
               onChange={(e) => setTargetUserId(e.target.value)}
-              placeholder="Target user ID"
+              placeholder="Target user ID, email, or name"
               className="border p-2 rounded w-full"
             />
             <select
@@ -300,8 +370,12 @@ export default function ProfilePage() {
               <option value="EXPERT">Expert</option>
               <option value="MASTER">Master</option>
               <option value="CONTENT_CREATOR">Content Creator</option>
-              <option value="ADMIN">Admin</option>
-              <option value="DEVELOPER">Developer</option>
+              {isDeveloperRole ? (
+                <>
+                  <option value="ADMIN">Admin</option>
+                  <option value="DEVELOPER">Developer</option>
+                </>
+              ) : null}
             </select>
             <button
               onClick={assignBadgeRole}
@@ -356,7 +430,7 @@ export default function ProfilePage() {
               </button>
 
               <button
-                onClick={() => handleDelete(p.id)}
+                onClick={() => openDeleteConfirm(p.id)}
                 className="text-sm px-3 py-1 bg-red-100 rounded hover:bg-red-400 transition-all duration-300"
               >
                 Delete
@@ -398,6 +472,35 @@ export default function ProfilePage() {
           <div className="text-sm text-gray-600">No applied posts yet.</div>
         )}
       </div>
+
+      {showConfirmDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Delete Post</h3>
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete this post? This action cannot be
+              undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowConfirmDelete(false);
+                  setDeleteId(null);
+                }}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

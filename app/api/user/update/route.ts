@@ -45,14 +45,17 @@ export async function POST(req: Request) {
         );
       }
 
-      // Only the privileged roles can assign the top-tier badges
-      const restrictedBadges = ["DEVELOPER", "ADMIN", "CONTENT_CREATOR"];
+      // Only DEVELOPER can assign the highest-tier badges.
+      const restrictedBadges = ["DEVELOPER", "ADMIN"];
       if (
         restrictedBadges.includes(role.toUpperCase()) &&
-        !allowedActors.includes(actingRole)
+        actingRole !== "DEVELOPER"
       ) {
         return NextResponse.json(
-          { error: "Permission denied for restricted badge assignment" },
+          {
+            error:
+              "Permission denied: only DEVELOPER can assign ADMIN or DEVELOPER badges",
+          },
           { status: 403 },
         );
       }
@@ -77,6 +80,13 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Failed to update profile" },
         { status: 500 },
+      );
+    }
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "User not found or update did not apply" },
+        { status: 404 },
       );
     }
 

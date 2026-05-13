@@ -22,41 +22,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Load user from localStorage on mount
-    try {
-      const stored = localStorage.getItem("clarifynet_user");
-      if (stored) {
-        setUser(JSON.parse(stored));
+    const fetchSession = async () => {
+      try {
+        const res = await fetch("/api/auth/session");
+        const json = await res.json();
+        if (json?.data) {
+          setUser(json.data);
+        } else {
+          setUser(null);
+        }
+      } catch (e) {
+        console.error("Failed to load session", e);
+        setUser(null);
       }
-    } catch (e) {
-      console.error("Failed to load user from localStorage", e);
-    }
+    };
+
+    fetchSession();
   }, []);
 
   const updateUser = (newUser: User | null) => {
     setUser(newUser);
-    try {
-      // global key for compatibility
-      if (newUser) {
-        localStorage.setItem("clarifynet_user", JSON.stringify(newUser));
-        localStorage.setItem(
-          `clarifynet_user_${newUser.id}`,
-          JSON.stringify(newUser),
-        );
-      } else {
-        localStorage.removeItem("clarifynet_user");
-      }
-    } catch (e) {
-      console.error("Failed to save user to localStorage", e);
-    }
   };
 
-  const logout = () => {
+  const logout = async () => {
     updateUser(null);
     try {
-      localStorage.removeItem("clarifynet_user");
+      await fetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
-      console.error("Failed to remove localStorage on logout", e);
+      console.error("Logout request failed", e);
     }
 
     if (typeof window !== "undefined" && "caches" in window) {
