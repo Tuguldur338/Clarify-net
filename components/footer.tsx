@@ -4,7 +4,13 @@ import Image from "next/image";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-blue-400/50 py-10 mt-16">
+    <footer
+      className="w-full py-10 mt-16"
+      style={{
+        backgroundColor: "var(--footer-background)",
+        color: "var(--footer-foreground)",
+      }}
+    >
       <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-10">
         {/* Brand */}
         <div>
@@ -17,23 +23,23 @@ const Footer: React.FC = () => {
               className="rounded-full w-[100px] h-[100px]"
             />
 
-            <h2 className="text-xl text-white font-semibold">ClarifyNet</h2>
+            <h2 className="text-xl font-semibold">ClarifyNet</h2>
           </div>
 
-          <p className="text-white mt-3">
+          <p className="mt-3">
             A place where learning becomes clear and simple.
           </p>
         </div>
 
         {/* Links */}
         <div>
-          <h3 className="font-semibold text-white text-lg mb-3">Navigation</h3>
+          <h3 className="font-semibold text-lg mb-3">Navigation</h3>
 
-          <ul className="space-y-2 text-white">
+          <ul className="space-y-2">
             <li>
               <Link
                 href="/"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 Home
               </Link>
@@ -42,7 +48,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/search"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 Search
               </Link>
@@ -51,7 +57,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/topics"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 Topics
               </Link>
@@ -60,7 +66,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="/about"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 About
               </Link>
@@ -70,13 +76,13 @@ const Footer: React.FC = () => {
 
         {/* Socials */}
         <div>
-          <h3 className="font-semibold text-white text-lg mb-3">Follow</h3>
+          <h3 className="font-semibold text-lg mb-3">Follow</h3>
 
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2">
             <li>
               <Link
                 href="#"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 Instagram
               </Link>
@@ -85,7 +91,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="#"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 YouTube
               </Link>
@@ -94,7 +100,7 @@ const Footer: React.FC = () => {
             <li>
               <Link
                 href="#"
-                className="no-underline! text-white hover:text-orange-300! transition-all duration-300"
+                className="no-underline! hover:text-orange-300! transition-all duration-300"
               >
                 Twitter
               </Link>
@@ -104,7 +110,10 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Bottom bar */}
-      <div className="mt-10 border-t border-gray-300 pt-5 text-center text-white">
+      <div
+        className="mt-10 border-t pt-5 text-center"
+        style={{ borderColor: "var(--footer-border)" }}
+      >
         © {new Date().getFullYear()} ClarifyNet. All rights reserved.
       </div>
     </footer>

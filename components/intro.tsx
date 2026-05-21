@@ -30,22 +30,30 @@ const Intro: React.FC = () => {
   }, []);
 
   return (
-    <section className="bg-gray-50 py-12 md:py-16">
+    <section
+      className="py-12 md:py-16"
+      style={{ backgroundColor: "var(--panel-background)" }}
+    >
       <div className="mx-auto max-w-5xl px-4 md:px-0">
-        <div className="rounded-2xl bg-white border border-gray-200 shadow-sm p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-900">
+        <div
+          className="rounded-2xl border shadow-sm p-6 md:p-8"
+          style={{
+            backgroundColor: "var(--surface-strong)",
+            borderColor: "var(--border)",
+            boxShadow: "var(--card-shadow)",
+          }}
+        >
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground">
             Welcome to ClarifyNet!
           </h1>
-          <p className="mt-3 text-center text-gray-600 md:text-lg">
+          <p className="mt-3 text-center text-muted md:text-lg">
             Discover what people are sharing in algebra, science, and more.
           </p>
 
           {loading ? (
-            <div className="italic text-gray-500">
-              Loading latest knowledge...
-            </div>
+            <div className="italic text-muted">Loading latest knowledge...</div>
           ) : posts.length === 0 ? (
-            <div className="text-gray-500">No recent posts yet.</div>
+            <div className="text-muted">No recent posts yet.</div>
           ) : (
             posts.map((post) => (
               <a
@@ -54,17 +62,24 @@ const Intro: React.FC = () => {
                 className="block h-full no-underline hover:no-underline"
                 style={{ textDecoration: "none" }}
               >
-                <Card className="h-full shadow-sm border border-gray-200 hover:border-blue-400 hover:shadow-xl transform hover:-translate-y-2 transition-all duration-200">
+                <Card
+                  className="h-full transform hover:-translate-y-2 transition-all duration-200"
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--border)",
+                    boxShadow: "var(--card-shadow)",
+                  }}
+                >
                   <Card.Body>
-                    <Card.Title className="text-lg font-semibold text-slate-900">
+                    <Card.Title className="text-lg font-semibold text-foreground">
                       {post.title}
                     </Card.Title>
 
-                    <Card.Subtitle className="mb-2 text-sm text-gray-500">
+                    <Card.Subtitle className="mb-2 text-sm text-muted">
                       {post.topic}
                     </Card.Subtitle>
 
-                    <Card.Text className="text-sm text-gray-700 whitespace-pre-wrap">
+                    <Card.Text className="text-sm text-muted whitespace-pre-wrap">
                       <MathText value={post.content?.slice(0, 140)} />
                       {post.content?.length > 140 ? "..." : ""}
                     </Card.Text>

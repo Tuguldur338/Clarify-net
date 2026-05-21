@@ -16,7 +16,10 @@ const Header: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [theme, setTheme] = useState("light");
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fetch suggestions as user types
@@ -138,6 +141,43 @@ const Header: React.FC = () => {
     setShowSuggestions(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const storedTheme = window.localStorage.getItem("clarifynet-theme");
+    const initialTheme =
+      storedTheme === "light" ||
+      storedTheme === "dark" ||
+      storedTheme === "neon"
+        ? storedTheme
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+
+    setTheme(initialTheme);
+    document.documentElement.setAttribute("data-theme", initialTheme);
+    window.localStorage.setItem("clarifynet-theme", initialTheme);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        themeMenuRef.current &&
+        !themeMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowThemeMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const updateTheme = (newTheme: string) => {
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    window.localStorage.setItem("clarifynet-theme", newTheme);
+    setShowThemeMenu(false);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions) return;
 
@@ -169,7 +209,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="w-full sticky top-0 z-40">
-      <div className="mx-auto bg-blue-400/50 backdrop-blur-sm px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3">
+      <div className="mx-auto header-theme backdrop-blur-sm px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center">
             <Image
@@ -180,7 +220,6 @@ const Header: React.FC = () => {
               className="w-[70px] h-[70px] object-contain hover:scale-[1.15] transition-all duration-300 rounded-full!"
             />
           </Link>
-
           <nav className="hidden md:flex items-center gap-4">
             <Link
               href="/about"
@@ -192,7 +231,7 @@ const Header: React.FC = () => {
                 className="transition-opacity duration-500"
                 style={{
                   opacity: hoveredLink === "about" ? 0 : 1,
-                  color: "white",
+                  color: "var(--header-foreground)",
                 }}
               >
                 About
@@ -222,7 +261,7 @@ const Header: React.FC = () => {
                 className="transition-opacity duration-500"
                 style={{
                   opacity: hoveredLink === "contact" ? 0 : 1,
-                  color: "white",
+                  color: "var(--header-foreground)",
                 }}
               >
                 Contact
@@ -252,7 +291,7 @@ const Header: React.FC = () => {
                 className="transition-opacity duration-500"
                 style={{
                   opacity: hoveredLink === "add-knowledge" ? 0 : 1,
-                  color: "white",
+                  color: "var(--header-foreground)",
                 }}
               >
                 Add knowledge
@@ -282,7 +321,10 @@ const Header: React.FC = () => {
             }}
             className="flex items-center group cursor-text relative"
           >
-            <Search className="text-white mr-2 group-hover:scale-[1.2] transition-all duration-300" />
+            <Search
+              className="mr-2 group-hover:scale-[1.2] transition-all duration-300"
+              style={{ color: "var(--header-foreground)" }}
+            />
 
             <input
               ref={inputRef}
@@ -292,7 +334,12 @@ const Header: React.FC = () => {
               onFocus={() => q.trim() && setShowSuggestions(true)}
               type="text"
               placeholder="Search Subtopics like Algebra or Chemistry..."
-              className="hidden sm:block bg-white rounded-full px-4 py-2 w-90! text-slate-900 placeholder-slate-500 focus:outline-none backdrop-blur-sm"
+              className="hidden sm:block rounded-full px-4 py-2 w-90! placeholder-slate-500 focus:outline-none backdrop-blur-sm"
+              style={{
+                backgroundColor: "var(--surface-strong)",
+                color: "var(--foreground)",
+                border: "1px solid var(--border)",
+              }}
               autoComplete="off"
             />
 
@@ -300,25 +347,32 @@ const Header: React.FC = () => {
             {showSuggestions && suggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                style={{ marginLeft: "2.5rem" }}
+                className="absolute top-full left-0 mt-2 w-80 rounded-lg shadow-lg border z-50"
+                style={{
+                  marginLeft: "2.5rem",
+                  backgroundColor: "var(--surface-strong)",
+                  borderColor: "var(--border)",
+                }}
               >
                 {suggestions.map((suggestion, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSuggestionClick(suggestion)}
                     onMouseEnter={() => setHighlightedIndex(idx)}
-                    className={`w-full text-left px-4 py-3 transition-colors ${
-                      highlightedIndex === idx
-                        ? "bg-blue-100 text-blue-900"
-                        : "hover:bg-gray-50 text-gray-800"
-                    } border-b last:border-b-0`}
+                    className={`w-full text-left px-4 py-3 transition-colors border-b last:border-b-0`}
+                    style={{
+                      color: "var(--foreground)",
+                      backgroundColor:
+                        highlightedIndex === idx
+                          ? "rgba(59,130,246,0.12)"
+                          : "transparent",
+                    }}
                     type="button"
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium">{suggestion.value}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted">
                           {suggestion.type === "topic"
                             ? `${suggestion.count} post${suggestion.count !== 1 ? "s" : ""}`
                             : suggestion.topic
@@ -335,18 +389,71 @@ const Header: React.FC = () => {
           </form>
 
           <div className="hidden md:flex items-center gap-2">
+            <div className="relative" ref={themeMenuRef}>
+              <button
+                type="button"
+                onClick={() => setShowThemeMenu((prev) => !prev)}
+                className="text-sm border rounded transition-all duration-300 px-3 py-1"
+                style={{
+                  color: "var(--header-foreground)",
+                  borderColor: "var(--border)",
+                  backgroundColor: "rgba(255,255,255,0.12)",
+                }}
+              >
+                Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              </button>
+              {showThemeMenu && (
+                <div
+                  className="absolute right-0 mt-2 w-36 rounded-lg border shadow-xl backdrop-blur-sm z-50"
+                  style={{
+                    backgroundColor: "var(--surface-strong)",
+                    borderColor: "var(--border)",
+                  }}
+                >
+                  {[
+                    { id: "light", label: "Light" },
+                    { id: "dark", label: "Dark" },
+                    { id: "neon", label: "Neon" },
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => updateTheme(option.id)}
+                      className="w-full text-left px-3 py-2 transition-colors duration-200"
+                      style={{
+                        color: "var(--foreground)",
+                        backgroundColor:
+                          theme === option.id
+                            ? "rgba(59,130,246,0.12)"
+                            : "transparent",
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {!user ? (
               <>
                 <Link
                   href="/auth/login"
-                  className="text-sm text-white no-underline! border border-white rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  className="text-sm no-underline! border rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  style={{
+                    color: "var(--header-foreground)",
+                    borderColor: "var(--header-foreground)",
+                  }}
                 >
                   Sign in
                 </Link>
 
                 <Link
                   href="/auth/register"
-                  className="text-sm text-white no-underline! border border-white rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  className="text-sm no-underline! border rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  style={{
+                    color: "var(--header-foreground)",
+                    borderColor: "var(--header-foreground)",
+                  }}
                 >
                   Sign up
                 </Link>
@@ -373,7 +480,10 @@ const Header: React.FC = () => {
                     )}
                   </div>
 
-                  <span className="text-sm text-white group-hover:text-orange-300! transition-all duration-300">
+                  <span
+                    className="text-sm group-hover:text-orange-300! transition-all duration-300"
+                    style={{ color: "var(--header-foreground)" }}
+                  >
                     {user.name || "Profile"}
                   </span>
                 </Link>
@@ -383,7 +493,11 @@ const Header: React.FC = () => {
                     logout();
                     router.push("/");
                   }}
-                  className="text-sm text-white border border-white rounded hover:bg-white hover:text-black transition-all duration-300 px-3 py-1"
+                  className="text-sm border rounded hover:bg-white hover:text-black transition-all duration-300 px-3 py-1"
+                  style={{
+                    color: "var(--header-foreground)",
+                    borderColor: "var(--header-foreground)",
+                  }}
                 >
                   Logout
                 </button>

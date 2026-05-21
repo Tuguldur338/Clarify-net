@@ -21,8 +21,21 @@
 }
 
 :root {
-  --background: #171717;
-  --foreground: #ffffff;
+  --background: #ffffff;
+  --foreground: #111827;
+  --muted: #475569;
+  --surface: #f8fafc;
+  --surface-strong: #ffffff;
+  --panel-background: #f1f5f9;
+  --border: #e2e8f0;
+  --header-background: rgba(59, 130, 246, 0.82);
+  --header-foreground: #ffffff;
+  --footer-background: rgba(59, 130, 246, 0.82);
+  --footer-foreground: #ffffff;
+  --footer-border: rgba(255, 255, 255, 0.35);
+  --card-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
 
   /* Neon Colors */
   --neon-pink: #ff0080;
@@ -57,6 +70,88 @@
   --neon-glow-purple: 0 0 20px #8338ec;
   --neon-glow-cyan: 0 0 20px #00f5ff;
   --neon-glow-yellow: 0 0 20px #ffff00;
+}
+
+:root[data-theme="dark"] {
+  --background: #020617;
+  --foreground: #e2e8f0;
+  --muted: #94a3b8;
+  --surface: #0f172a;
+  --surface-strong: #111827;
+  --panel-background: #030b1b;
+  --border: #334155;
+  --header-background: rgba(15, 23, 42, 0.92);
+  --header-foreground: #f8fafc;
+  --footer-background: rgba(15, 23, 42, 0.92);
+  --footer-foreground: #e2e8f0;
+  --footer-border: rgba(148, 163, 184, 0.3);
+  --card-shadow: 0 14px 35px rgba(2, 6, 23, 0.5);
+  --accent: #38bdf8;
+  --accent-strong: #0ea5e9;
+  color-scheme: dark;
+}
+
+:root[data-theme="neon"] {
+  --background: #050816;
+  --foreground: #f8fafc;
+  --muted: #cbd5e1;
+  --surface: #071229;
+  --surface-strong: #020816;
+  --panel-background: #030a1a;
+  --border: rgba(165, 243, 252, 0.25);
+  --header-background: rgba(2, 8, 22, 0.9);
+  --header-foreground: #f8fafc;
+  --footer-background: rgba(2, 8, 22, 0.9);
+  --footer-foreground: #f8fafc;
+  --footer-border: rgba(56, 189, 248, 0.35);
+  --card-shadow: 0 14px 35px rgba(2, 8, 22, 0.6);
+  --accent: #00f5ff;
+  --accent-strong: #ff00ff;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] .bg-white,
+:root[data-theme="dark"] .bg-gray-50,
+:root[data-theme="dark"] .bg-slate-50,
+:root[data-theme="dark"] .bg-slate-100 {
+  background-color: #0f172a;
+}
+
+:root[data-theme="dark"] .text-black,
+:root[data-theme="dark"] .text-slate-900,
+:root[data-theme="dark"] .text-gray-900 {
+  color: #f8fafc;
+}
+
+:root[data-theme="dark"] .border-gray-200,
+:root[data-theme="dark"] .border-gray-300,
+:root[data-theme="dark"] .border-slate-200,
+:root[data-theme="dark"] .border-slate-300 {
+  border-color: #334155;
+}
+
+:root[data-theme="neon"] .bg-white,
+:root[data-theme="neon"] .bg-gray-50,
+:root[data-theme="neon"] .bg-slate-50,
+:root[data-theme="neon"] .bg-slate-100 {
+  background-color: #071229;
+}
+
+:root[data-theme="neon"] .text-black,
+:root[data-theme="neon"] .text-slate-900,
+:root[data-theme="neon"] .text-gray-900 {
+  color: #f8fafc;
+}
+
+:root[data-theme="neon"] .border-gray-200,
+:root[data-theme="neon"] .border-gray-300,
+:root[data-theme="neon"] .border-slate-200,
+:root[data-theme="neon"] .border-slate-300 {
+  border-color: rgba(56, 189, 248, 0.35);
 }
 
 @theme inline {
@@ -122,9 +217,21 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1e1e1e;
-    --foreground: #ffffff;
+  :root:not([data-theme]) {
+    --background: #020617;
+    --foreground: #e2e8f0;
+    --muted: #94a3b8;
+    --surface: #0f172a;
+    --surface-strong: #111827;
+    --panel-background: #030b1b;
+    --border: #334155;
+    --header-background: rgba(15, 23, 42, 0.92);
+    --header-foreground: #f8fafc;
+    --footer-background: rgba(15, 23, 42, 0.92);
+    --footer-foreground: #e2e8f0;
+    --footer-border: rgba(148, 163, 184, 0.3);
+    --card-shadow: 0 14px 35px rgba(2, 6, 23, 0.5);
+    color-scheme: dark;
   }
 }
 
@@ -141,7 +248,18 @@ a {
 
 body {
   font-family: Inter, Arial, Helvetica, sans-serif;
-  @apply bg-white text-black;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+input,
+textarea,
+button,
+select {
+  color: var(--foreground);
 }
 
 a {
@@ -279,4 +397,22 @@ a {
 
 .carousel-control-next-icon {
   color: black !important;
+}
+
+.header-theme {
+  background-color: var(--header-background);
+  color: var(--header-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.theme-border {
+  border-color: var(--border) !important;
+}
+
+.text-foreground {
+  color: var(--foreground) !important;
+}
+
+.text-muted {
+  color: var(--muted) !important;
 }
