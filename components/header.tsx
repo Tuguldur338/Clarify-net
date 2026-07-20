@@ -217,13 +217,13 @@ const Header: React.FC = () => {
               alt="website logo"
               width={140}
               height={48}
-              className="w-[70px] h-[70px] object-contain hover:scale-[1.15] transition-all duration-300 rounded-full!"
+              className="w-[70px] h-[70px] object-contain hover:scale-[1.15] transition-all duration-300 rounded-full"
             />
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link
               href="/about"
-              className="text-sm inline-block relative no-underline! hover:border-gradient-to-r"
+              className="text-sm inline-block relative no-underline hover:border-gradient-to-r"
               onMouseEnter={() => setHoveredLink("about")}
               onMouseLeave={() => setHoveredLink(null)}
             >
@@ -253,7 +253,7 @@ const Header: React.FC = () => {
 
             <Link
               href="/contact"
-              className="text-sm inline-block relative no-underline!"
+              className="text-sm inline-block relative no-underline"
               onMouseEnter={() => setHoveredLink("contact")}
               onMouseLeave={() => setHoveredLink(null)}
             >
@@ -283,7 +283,7 @@ const Header: React.FC = () => {
 
             <Link
               href="/add-knowledge"
-              className="text-sm inline-block relative no-underline!"
+              className="text-sm inline-block relative no-underline"
               onMouseEnter={() => setHoveredLink("add-knowledge")}
               onMouseLeave={() => setHoveredLink(null)}
             >
@@ -334,7 +334,7 @@ const Header: React.FC = () => {
               onFocus={() => q.trim() && setShowSuggestions(true)}
               type="text"
               placeholder="Search Subtopics like Algebra or Chemistry..."
-              className="hidden sm:block rounded-full px-4 py-2 w-90! placeholder-slate-500 focus:outline-none backdrop-blur-sm"
+              className="hidden sm:block rounded-full px-4 py-2 w-90 placeholder-slate-500 focus:outline-none backdrop-blur-sm"
               style={{
                 backgroundColor: "var(--surface-strong)",
                 color: "var(--foreground)",
@@ -438,7 +438,7 @@ const Header: React.FC = () => {
               <>
                 <Link
                   href="/auth/login"
-                  className="text-sm no-underline! border rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  className="text-sm no-underline border rounded hover:bg-white transition-all hover:text-black duration-300 px-3 py-1"
                   style={{
                     color: "var(--header-foreground)",
                     borderColor: "var(--header-foreground)",
@@ -449,7 +449,7 @@ const Header: React.FC = () => {
 
                 <Link
                   href="/auth/register"
-                  className="text-sm no-underline! border rounded hover:bg-white transition-all hover:text-black! duration-300 px-3 py-1"
+                  className="text-sm no-underline border rounded hover:bg-white transition-all hover:text-black duration-300 px-3 py-1"
                   style={{
                     color: "var(--header-foreground)",
                     borderColor: "var(--header-foreground)",
@@ -462,10 +462,10 @@ const Header: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Link
                   href="/profile"
-                  className="flex items-center gap-2 group no-underline! hover:underline! transition-all"
+                  className="flex items-center gap-2 group no-underline hover:underline transition-all"
                   title={user.name || user.email}
                 >
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white group-hover:border-orange-300 transition-all duration-300 flex items-center justify-center bg-white">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white group-hover:border-orange-300 transition-all duration-300 flex items-center justify-center bg-[var(--surface)]">
                     {user.profile_picture_url ? (
                       <img
                         src={user.profile_picture_url}
@@ -481,7 +481,7 @@ const Header: React.FC = () => {
                   </div>
 
                   <span
-                    className="text-sm group-hover:text-orange-300! transition-all duration-300"
+                    className="text-sm group-hover:text-orange-300 transition-all duration-300"
                     style={{ color: "var(--header-foreground)" }}
                   >
                     {user.name || "Profile"}
@@ -493,10 +493,11 @@ const Header: React.FC = () => {
                     logout();
                     router.push("/");
                   }}
-                  className="text-sm border rounded hover:bg-white hover:text-black transition-all duration-300 px-3 py-1"
+                  className="text-sm border rounded transition-all duration-300 px-3 py-1"
                   style={{
                     color: "var(--header-foreground)",
                     borderColor: "var(--header-foreground)",
+                    backgroundColor: "rgba(255,255,255,0.08)",
                   }}
                 >
                   Logout

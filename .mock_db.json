@@ -1,24 +1,5 @@
 {
-  "knowledge_posts": [
-    {
-      "id": "ZKMY6_uG",
-      "title": "Algebra",
-      "topic": "math",
-      "content": "Category: Math\nTags: Complex\n\nI don't know.",
-      "video_url": null,
-      "image_url": null,
-      "owner": "mia9j1nmtdbli0"
-    },
-    {
-      "id": "2x9TKM09",
-      "title": "Hypotenuse use in daily life",
-      "topic": "math",
-      "content": "Category: Math\nTags: none\n\nx^2 + x + 67",
-      "video_url": null,
-      "image_url": null,
-      "owner": "mickq5yvpcu32f"
-    }
-  ],
+  "knowledge_posts": [],
   "users": [
     {
       "id": "mia9j1nmtdbli0",

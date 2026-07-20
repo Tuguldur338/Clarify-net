@@ -258,7 +258,7 @@ export default function AddPage() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded"
+            className="border p-2 rounded bg-[var(--surface)] text-[var(--foreground)] border-[var(--border)]"
           >
             <option value="Fun">Fun</option>
             <option value="Guitar">Guitar</option>

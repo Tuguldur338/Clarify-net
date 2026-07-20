@@ -117,41 +117,148 @@
 :root[data-theme="dark"] .bg-white,
 :root[data-theme="dark"] .bg-gray-50,
 :root[data-theme="dark"] .bg-slate-50,
-:root[data-theme="dark"] .bg-slate-100 {
-  background-color: #0f172a;
+:root[data-theme="dark"] .bg-slate-100,
+:root[data-theme="dark"] .bg-gray-100,
+:root[data-theme="dark"] .bg-gray-200,
+:root[data-theme="dark"] .bg-gray-300,
+:root[data-theme="dark"] .bg-gray-400,
+:root[data-theme="dark"] .bg-blue-50,
+:root[data-theme="dark"] .bg-blue-100,
+:root[data-theme="dark"] .bg-blue-200,
+:root[data-theme="dark"] .bg-red-50,
+:root[data-theme="dark"] .bg-red-100,
+:root[data-theme="dark"] .bg-green-50,
+:root[data-theme="dark"] .bg-green-100,
+:root[data-theme="dark"] .bg-yellow-50,
+:root[data-theme="dark"] .bg-yellow-100 {
+  background-color: var(--surface-strong) !important;
+}
+
+:root[data-theme="dark"] .hover\:bg-white:hover,
+:root[data-theme="dark"] .hover\:bg-gray-50:hover,
+:root[data-theme="dark"] .hover\:bg-slate-50:hover,
+:root[data-theme="dark"] .hover\:bg-slate-100:hover,
+:root[data-theme="dark"] .hover\:bg-gray-100:hover,
+:root[data-theme="dark"] .hover\:bg-gray-200:hover,
+:root[data-theme="dark"] .hover\:bg-gray-300:hover,
+:root[data-theme="dark"] .hover\:bg-gray-400:hover,
+:root[data-theme="dark"] .hover\:bg-blue-50:hover,
+:root[data-theme="dark"] .hover\:bg-blue-100:hover,
+:root[data-theme="dark"] .hover\:bg-blue-200:hover,
+:root[data-theme="dark"] .hover\:bg-red-50:hover,
+:root[data-theme="dark"] .hover\:bg-red-100:hover,
+:root[data-theme="dark"] .hover\:bg-green-50:hover,
+:root[data-theme="dark"] .hover\:bg-green-100:hover,
+:root[data-theme="dark"] .hover\:bg-yellow-50:hover,
+:root[data-theme="dark"] .hover\:bg-yellow-100:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 :root[data-theme="dark"] .text-black,
 :root[data-theme="dark"] .text-slate-900,
-:root[data-theme="dark"] .text-gray-900 {
-  color: #f8fafc;
+:root[data-theme="dark"] .text-gray-900,
+:root[data-theme="dark"] .text-gray-800,
+:root[data-theme="dark"] .text-gray-700,
+:root[data-theme="dark"] .text-gray-600,
+:root[data-theme="dark"] .text-gray-500,
+:root[data-theme="dark"] .text-gray-400 {
+  color: var(--foreground) !important;
 }
 
+:root[data-theme="dark"] .border-white,
 :root[data-theme="dark"] .border-gray-200,
 :root[data-theme="dark"] .border-gray-300,
 :root[data-theme="dark"] .border-slate-200,
-:root[data-theme="dark"] .border-slate-300 {
-  border-color: #334155;
+:root[data-theme="dark"] .border-slate-300,
+:root[data-theme="dark"] .border-blue-100 {
+  border-color: var(--border) !important;
+}
+
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] input {
+  background-color: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+:root[data-theme="dark"] option {
+  background-color: var(--surface) !important;
+  color: var(--foreground) !important;
 }
 
 :root[data-theme="neon"] .bg-white,
 :root[data-theme="neon"] .bg-gray-50,
 :root[data-theme="neon"] .bg-slate-50,
-:root[data-theme="neon"] .bg-slate-100 {
-  background-color: #071229;
+:root[data-theme="neon"] .bg-slate-100,
+:root[data-theme="neon"] .bg-gray-100,
+:root[data-theme="neon"] .bg-gray-200,
+:root[data-theme="neon"] .bg-gray-300,
+:root[data-theme="neon"] .bg-gray-400,
+:root[data-theme="neon"] .bg-blue-50,
+:root[data-theme="neon"] .bg-blue-100,
+:root[data-theme="neon"] .bg-blue-200,
+:root[data-theme="neon"] .bg-red-50,
+:root[data-theme="neon"] .bg-red-100,
+:root[data-theme="neon"] .bg-green-50,
+:root[data-theme="neon"] .bg-green-100,
+:root[data-theme="neon"] .bg-yellow-50,
+:root[data-theme="neon"] .bg-yellow-100 {
+  background-color: var(--surface-strong) !important;
+}
+
+:root[data-theme="neon"] .hover\:bg-white:hover,
+:root[data-theme="neon"] .hover\:bg-gray-50:hover,
+:root[data-theme="neon"] .hover\:bg-slate-50:hover,
+:root[data-theme="neon"] .hover\:bg-slate-100:hover,
+:root[data-theme="neon"] .hover\:bg-gray-100:hover,
+:root[data-theme="neon"] .hover\:bg-gray-200:hover,
+:root[data-theme="neon"] .hover\:bg-gray-300:hover,
+:root[data-theme="neon"] .hover\:bg-gray-400:hover,
+:root[data-theme="neon"] .hover\:bg-blue-50:hover,
+:root[data-theme="neon"] .hover\:bg-blue-100:hover,
+:root[data-theme="neon"] .hover\:bg-blue-200:hover,
+:root[data-theme="neon"] .hover\:bg-red-50:hover,
+:root[data-theme="neon"] .hover\:bg-red-100:hover,
+:root[data-theme="neon"] .hover\:bg-green-50:hover,
+:root[data-theme="neon"] .hover\:bg-green-100:hover,
+:root[data-theme="neon"] .hover\:bg-yellow-50:hover,
+:root[data-theme="neon"] .hover\:bg-yellow-100:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 :root[data-theme="neon"] .text-black,
 :root[data-theme="neon"] .text-slate-900,
-:root[data-theme="neon"] .text-gray-900 {
-  color: #f8fafc;
+:root[data-theme="neon"] .text-gray-900,
+:root[data-theme="neon"] .text-gray-800,
+:root[data-theme="neon"] .text-gray-700,
+:root[data-theme="neon"] .text-gray-600,
+:root[data-theme="neon"] .text-gray-500,
+:root[data-theme="neon"] .text-gray-400 {
+  color: var(--foreground) !important;
 }
 
+:root[data-theme="neon"] .border-white,
 :root[data-theme="neon"] .border-gray-200,
 :root[data-theme="neon"] .border-gray-300,
 :root[data-theme="neon"] .border-slate-200,
-:root[data-theme="neon"] .border-slate-300 {
-  border-color: rgba(56, 189, 248, 0.35);
+:root[data-theme="neon"] .border-slate-300,
+:root[data-theme="neon"] .border-blue-100 {
+  border-color: var(--border) !important;
+}
+
+:root[data-theme="neon"] select,
+:root[data-theme="neon"] textarea,
+:root[data-theme="neon"] input {
+  background-color: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+  color-scheme: dark;
+}
+
+:root[data-theme="neon"] option {
+  background-color: var(--surface) !important;
+  color: var(--foreground) !important;
 }
 
 @theme inline {

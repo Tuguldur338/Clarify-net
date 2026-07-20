@@ -283,7 +283,7 @@ export default function ProfilePage() {
     <div className="p-6 max-w-3xl mx-auto">
       <div className="mb-6 flex items-start gap-6">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-white">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-[var(--surface)]">
             {user.profile_picture_url ? (
               <img
                 src={
@@ -307,7 +307,8 @@ export default function ProfilePage() {
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="absolute bottom-0 right-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center border-2 border-white hover:bg-gray-200 transition-all shadow-lg"
+            className="absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center border-2 border-white hover:bg-[rgba(255,255,255,0.08)] transition-all shadow-lg"
+            style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}
             title="Update profile picture"
           >
             <Camera size={20} className="text-gray-700" />
@@ -363,7 +364,7 @@ export default function ProfilePage() {
             <select
               value={targetRole}
               onChange={(e) => setTargetRole(e.target.value)}
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full bg-[var(--surface)] text-[var(--foreground)] border-[var(--border)]"
             >
               <option value="USER">User</option>
               <option value="BEGINNER">Beginner</option>
@@ -418,21 +419,24 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => router.push(`/p/${p.id}`)}
-                className="text-sm px-3 py-1 bg-gray-100 rounded hover:bg-gray-400 transition-all duration-300"
+                className="text-sm px-3 py-1 rounded transition-all duration-300"
+                style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
               >
                 View
               </button>
 
               <button
                 onClick={() => router.push(`/edit/${p.id}`)}
-                className="text-sm px-3 py-1 bg-yellow-100 rounded hover:bg-yellow-400 transition-all duration-300"
+                className="text-sm px-3 py-1 rounded transition-all duration-300"
+                style={{ backgroundColor: "rgba(250, 204, 21, 0.14)", color: "var(--foreground)" }}
               >
                 Edit
               </button>
 
               <button
                 onClick={() => openDeleteConfirm(p.id)}
-                className="text-sm px-3 py-1 bg-red-100 rounded hover:bg-red-400 transition-all duration-300"
+                className="text-sm px-3 py-1 rounded transition-all duration-300"
+                style={{ backgroundColor: "rgba(248, 113, 113, 0.18)", color: "var(--foreground)" }}
               >
                 Delete
               </button>
@@ -461,7 +465,8 @@ export default function ProfilePage() {
                 <div className="mt-2 flex gap-2">
                   <button
                     onClick={() => router.push(`/p/${p.id}`)}
-                    className="text-sm px-3 py-1 bg-blue-100 rounded hover:bg-blue-200"
+                    className="text-sm px-3 py-1 rounded transition-all duration-300"
+                    style={{ backgroundColor: "rgba(59, 130, 246, 0.16)", color: "var(--foreground)" }}
                   >
                     View
                   </button>
@@ -476,7 +481,7 @@ export default function ProfilePage() {
 
       {showConfirmDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+          <div className="bg-[var(--surface-strong)] p-6 rounded-lg shadow-lg max-w-sm w-full mx-4" style={{ color: "var(--foreground)" }}>
             <h3 className="text-lg font-semibold mb-4">Delete Post</h3>
             <p className="text-gray-700 mb-6">
               Are you sure you want to delete this post? This action cannot be

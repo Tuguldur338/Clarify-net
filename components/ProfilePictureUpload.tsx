@@ -213,8 +213,8 @@ export default function ProfilePictureUpload({
           {previewUrl && (
             <div className="mt-6">
               <p className="text-sm font-medium text-gray-700 mb-3">Preview</p>
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center bg-white">
+              <div className="flex items-center gap-4 p-4 bg-[var(--surface)] rounded-lg" style={{ color: "var(--foreground)", borderColor: "var(--border)" }}>
+                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center bg-[var(--surface)]">
                   <img
                     src={previewUrl}
                     alt="Preview"

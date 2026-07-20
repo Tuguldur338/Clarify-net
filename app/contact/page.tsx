@@ -52,7 +52,7 @@ export default function Contact() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 py-3 text-lg font-semibold text-white hover:bg-blue-700 transition rounded-xl! duration-300"
+            className="w-full bg-blue-600 py-3 text-lg font-semibold text-white hover:bg-blue-700 transition rounded-xl duration-300"
           >
             Send Message
           </button>

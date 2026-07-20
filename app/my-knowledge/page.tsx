@@ -5,18 +5,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import PostActions from "@/components/PostActions";
 import RoleBadge from "@/components/RoleBadge";
 import MathText from "@/components/MathText";
-import { getRoleByPostCount, getUserRole } from "@/utils/roleUtils";
+import { getUserRole } from "@/utils/roleUtils";
+
+type PostItem = {
+  id: string;
+  title: string;
+  topic: string;
+  owner: string;
+  content?: string;
+};
 
 export default function MyKnowledgePage() {
   const { user } = useAuth();
-  const [posts, setPosts] = useState<any[] | null>(null);
+  const [posts, setPosts] = useState<PostItem[] | null>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user?.id) {
-      fetchPosts(user.id);
-    }
-  }, [user]);
 
   const fetchPosts = async (userId: string) => {
     setLoading(true);
@@ -36,12 +38,29 @@ export default function MyKnowledgePage() {
     }
   };
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    let isMounted = true;
+
+    const loadPosts = async () => {
+      await fetchPosts(user.id);
+      if (!isMounted) return;
+    };
+
+    void loadPosts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
+
   if (!user)
     return (
       <div className="p-6 max-w-3xl mx-auto">
         <h2 className="text-xl font-semibold">Not logged in</h2>
         <p className="text-sm text-gray-600">
-          Please log in to see your knowledge.
+          Please log in to see your posted knowledge.
         </p>
       </div>
     );
@@ -65,7 +84,11 @@ export default function MyKnowledgePage() {
       ) : posts && posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {posts.map((p) => (
-            <div key={p.id} className="p-4 bg-white rounded shadow">
+            <div
+              key={p.id}
+              className="p-4 rounded shadow bg-[var(--surface-strong)]"
+              style={{ color: "var(--foreground)" }}
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <div className="font-semibold text-lg">{p.title}</div>

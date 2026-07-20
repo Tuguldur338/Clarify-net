@@ -38,8 +38,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <a
               key={item.id}
               href={`/p/${item.id}`}
-              className="block p-4 bg-white rounded-lg shadow hover:shadow-lg transform hover:-translate-y-1 transition no-underline hover:no-underline decoration-none"
-              style={{ textDecoration: "none" }}
+              className="block p-4 rounded-lg shadow bg-[var(--surface-strong)] hover:shadow-lg transform hover:-translate-y-1 transition no-underline hover:no-underline decoration-none"
+              style={{ textDecoration: "none", color: "var(--foreground)" }}
             >
               <div className="flex items-center justify-between">
                 <div className="font-semibold text-lg">{item.title}</div>

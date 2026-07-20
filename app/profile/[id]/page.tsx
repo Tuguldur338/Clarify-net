@@ -79,7 +79,7 @@ export default function UserProfilePage() {
     <div className="p-6 max-w-3xl mx-auto">
       <div className="mb-6 flex items-start gap-6">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-white">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-[var(--surface)]">
             {profileUser.profile_picture_url ? (
               <img
                 src={profileUser.profile_picture_url}
@@ -132,7 +132,8 @@ export default function UserProfilePage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.open(`/p/${p.id}`, "_blank")}
-                  className="text-sm px-3 py-1 bg-gray-100 rounded hover:bg-gray-400 transition-all duration-300"
+                  className="text-sm px-3 py-1 rounded transition-all duration-300"
+                  style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
                 >
                   View
                 </button>
