@@ -13,13 +13,16 @@ export async function POST(req: Request) {
       );
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedName = String(name || "").trim() || null;
+
     // check existing
     const existing = await supabase
       .from("users")
-      .select("*")
-      .eq("email", email)
-      .single();
-    if (existing && existing.data) {
+      .select("id")
+      .eq("email", normalizedEmail)
+      .maybeSingle();
+    if (existing?.data) {
       return NextResponse.json(
         { error: "User already exists" },
         { status: 409 },
@@ -49,8 +52,8 @@ export async function POST(req: Request) {
       .from("users")
       .insert({
         id,
-        email,
-        name: name || null,
+        email: normalizedEmail,
+        name: normalizedName,
         password_hash,
         profile_picture_url: profile_picture_url || null,
         role: defaultRole,

@@ -230,7 +230,6 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
         if (this._operation === "delete") {
           const table = this._table;
           if (!mockDb[table]) return { data: null, error: null };
-          // determine rows to delete (use _results if present, otherwise none)
           const toDelete = this._results || [];
           const deleted = [];
           mockDb[table] = (mockDb[table] || []).filter((r) => {
@@ -239,7 +238,6 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
             return keep;
           });
           this.data = deleted.slice();
-          // persist
           if (isServer && mockFilePath) {
             try {
               const fs = require("fs");
@@ -272,7 +270,6 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
             }
           }
           this.data = updated.slice();
-          // persist
           if (isServer && mockFilePath) {
             try {
               const fs = require("fs");
@@ -289,7 +286,14 @@ if (!isValidHttpUrl(supabaseUrl) || !supabaseKey) {
           };
         }
 
-        // otherwise return first from data/results
+        const first = this.data && this.data.length > 0 ? this.data[0] : null;
+        return { data: first, error: null };
+      },
+
+      maybeSingle: async function () {
+        if (this._insertPayload)
+          return { data: this._insertPayload, error: null };
+
         const first = this.data && this.data.length > 0 ? this.data[0] : null;
         return { data: first, error: null };
       },
