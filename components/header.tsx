@@ -489,8 +489,8 @@ const Header: React.FC = () => {
                 </Link>
 
                 <button
-                  onClick={() => {
-                    logout();
+                  onClick={async () => {
+                    await logout();
                     router.push("/");
                   }}
                   className="text-sm border rounded transition-all duration-300 px-3 py-1"

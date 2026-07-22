@@ -13,11 +13,13 @@ export async function POST(req: Request) {
       );
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+
     const res = await supabase
       .from("users")
       .select("*")
-      .eq("email", email)
-      .single();
+      .eq("email", normalizedEmail)
+      .maybeSingle();
     if (!res || !res.data) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
